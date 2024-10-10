@@ -256,3 +256,65 @@ http://hanghae.duckdns.org/
 - AWS를 통해 API서버를 배포하였습니다.
 
 </details>
+
+<details>
+  <summary><b>기술스택</b></summary>
+
+### **1. Web Application Server**
+- **Java 17**
+- **Spring Boot**
+- **Spring Web**
+- **Spring Validation**
+- **Spring Security**
+- **JWT (Json Web Token)**
+
+### **2. Database**
+- **H2** (Domain)
+- **Spring Data JPA**
+- **QueryDSL**
+
+### **3. Messaging Solution**
+- **Spring for Apache Kafka**
+
+### **4. Caching**
+- **Redis** (Caching)
+
+### **5. Monitoring System**
+- **Prometheus** (Application Metadata)
+- **Grafana**
+- **Spring Actuator**
+
+### **6. Documentation**
+- **Swagger**
+
+### **7. Testing**
+- **Spring Boot Test**
+
+</details>
+
+
+
+<details>
+  <summary><b>패키지 구조</b></summary>
+
+```
+api/
+  └── 도메인/ (product, order, user, cart...)
+      ├── controller/
+      ├── dto/
+      │   ├── request/
+      │   └── response/
+
+domain/
+  └── 도메인/ (product, order, user, cart...)
+      ├── models/
+      │   └── 도메인Entity
+      ├── service/
+      │   └── 도메인Service
+      ├── repositories/
+      │   └── 도메인Repository (I/F)
+      └── infrastructure/
+          ├── 도메인JpaRepository.java (JPA)
+          └── 도메인QueryRepository.java (QueryDSL)
+```
+</details>
