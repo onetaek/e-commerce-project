@@ -1,20 +1,29 @@
 # E-commerce 서버 구축
-## 프로젝트 Milestone
+
+## 프로젝트 문서 
+
+<details>
+  <summary><b>프로젝트 Milestone</b></summary>
 <a href="https://github.com/users/onetaek/projects/4/views/1">
-    <img src="https://github.com/user-attachments/assets/7573c1bf-c594-4fea-a269-c58991e05bc9" />
+    <img src="https://github.com/user-attachments/assets/2115fb9f-fd94-4823-ac1c-fba02c8d58d7" />
 <a/>
 
 - github의 project 와 milestones 기능을 사용하여 작성하였습니다.
 - 이미지를 클릭하시면 자세한 내용을 확인할 수 있습니다.
 
-## 도메인 모델링
+</details>
+
+<details>
+  <summary><b>도메인 모델링</b></summary>
 <a href="https://lucid.app/lucidchart/c90bb540-962e-46a2-b01a-c3a065a2714e/edit?viewport_loc=-1053%2C-547%2C2367%2C1030%2C0_0&invitationId=inv_0471bdc9-2ac0-4a1f-99e6-2adcd636f258">
     <img src="https://github.com/user-attachments/assets/ab58869d-674a-44e7-95bf-a709f670d0ff" />
 <a/>
-
 - 요구사항에 맞는 어떤 `객체`를 도출해낼 것인가? 어떤 `메세지`를 전달할 것인가? 를 생각하며 모델링 하였습니다.
 
-## 시퀀스 다이어그램
+</details>
+
+<details>
+  <summary><b>시퀀스 다이어그램</b></summary>
 
 1. 잔액 충전 / 조회 시나리오
 ```mermaid
@@ -163,3 +172,149 @@ sequenceDiagram
     장바구니항목-->>장바구니: 장바구니 항목 정보 반환
     장바구니-->>사용자: 장바구니 목록 반환 (상품 이름, 수량, 가격)
 ```
+</details>
+
+
+<details>
+  <summary><b>ERD</b></summary>
+
+## ERD
+
+```mermaid
+erDiagram
+    User {
+        BIGINT id PK "PRIMARY KEY AUTO_INCREMENT"
+        VARCHAR name "NOT NULL"
+        BIGINT balance_id FK "FOREIGN KEY"
+    }
+    Balance {
+        BIGINT balance_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT user_id FK "FOREIGN KEY UNIQUE"
+        DECIMAL amount "NOT NULL DEFAULT 0.00"
+    }
+    Product {
+        BIGINT product_id PK "PRIMARY KEY AUTO_INCREMENT"
+        VARCHAR name "NOT NULL"
+        DECIMAL price "NOT NULL"
+        INT stock_quantity "NOT NULL"
+    }
+    Order {
+        BIGINT order_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT user_id FK "FOREIGN KEY"
+        TIMESTAMP order_date "DEFAULT CURRENT_TIMESTAMP"
+        DECIMAL total_price
+    }
+    OrderItem {
+        BIGINT order_item_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT order_id FK "FOREIGN KEY"
+        BIGINT product_id FK "FOREIGN KEY"
+        INT quantity "NOT NULL"
+        DECIMAL price "NOT NULL"
+    }
+    Inventory {
+        BIGINT inventory_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT product_id FK "UNIQUE"
+        INT available_quantity "NOT NULL"
+    }
+    Payment {
+        BIGINT payment_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT order_id FK "UNIQUE FOREIGN KEY"
+        DECIMAL amount "NOT NULL"
+        VARCHAR payment_status "NOT NULL"
+    }
+    Cart {
+        BIGINT cart_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT user_id FK "UNIQUE FOREIGN KEY"
+    }
+    CartItem {
+        BIGINT cart_item_id PK "PRIMARY KEY AUTO_INCREMENT"
+        BIGINT cart_id FK "FOREIGN KEY"
+        BIGINT product_id FK "FOREIGN KEY"
+        INT quantity "NOT NULL"
+    }
+
+    User ||--o| Balance : "has"
+    User ||--o{ Order : "places"
+    Order ||--|{ OrderItem : "contains"
+    Order ||--o| Payment : "has"
+    Product ||--|{ OrderItem : "included in"
+    Product ||--o| Inventory : "has"
+    User ||--o| Cart : "has"
+    Cart ||--|{ CartItem : "contains"
+    Product ||--|{ CartItem : "included in"
+```
+
+</details>
+
+
+<details>
+  <summary><b>API 명세서</b></summary>
+
+http://hanghae.duckdns.org/
+- 위 링크를 통해 API 명세서를 확인할 수 있습니다.
+- OpenAPI CodeGenerator 를 사용하여 API 명세서를 생성하였습니다.
+- AWS를 통해 API서버를 배포하였습니다.
+
+</details>
+
+<details>
+  <summary><b>기술스택</b></summary>
+
+### **1. Web Application Server**
+- **Java 17**
+- **Spring Boot**
+- **Spring Web**
+- **Spring Validation**
+- **Spring Security**
+- **JWT (Json Web Token)**
+
+### **2. Database**
+- **H2** (Domain)
+- **Spring Data JPA**
+- **QueryDSL**
+
+### **3. Messaging Solution**
+- **Spring for Apache Kafka**
+
+### **4. Caching**
+- **Redis** (Caching)
+
+### **5. Monitoring System**
+- **Prometheus** (Application Metadata)
+- **Grafana**
+- **Spring Actuator**
+
+### **6. Documentation**
+- **Swagger**
+
+### **7. Testing**
+- **Spring Boot Test**
+
+</details>
+
+
+
+<details>
+  <summary><b>패키지 구조</b></summary>
+
+```
+api/
+  └── 도메인/ (product, order, user, cart...)
+      ├── controller/
+      ├── dto/
+      │   ├── request/
+      │   └── response/
+
+domain/
+  └── 도메인/ (product, order, user, cart...)
+      ├── models/
+      │   └── 도메인Entity
+      ├── service/
+      │   └── 도메인Service
+      ├── repositories/
+      │   └── 도메인Repository (I/F)
+      └── infrastructure/
+          ├── 도메인JpaRepository.java (JPA)
+          └── 도메인QueryRepository.java (QueryDSL)
+```
+</details>

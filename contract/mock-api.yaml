@@ -1,0 +1,344 @@
+openapi: 3.0.3
+info:
+  title: E-Commerce API
+  description: e-커머스 상품 주문 서비스 API 문서입니다.
+  version: 1.0.0
+servers:
+  - url: https://api.ecommerce.com
+tags:
+  - name: Balance
+    description: 잔액 관리
+  - name: Product
+    description: 상품 관리 및 인기 상품 조회
+  - name: Order
+    description: 주문 및 결제
+  - name: Cart
+    description: 장바구니 관리
+
+paths:
+  /api/balances:
+    post:
+      operationId: chargeBalance
+      tags:
+        - Balance
+      summary: 잔액 충전
+      description: 사용자의 잔액을 충전한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chargeBalanceRequest'
+      responses:
+        200:
+          description: 잔액 충전 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceResponse'
+        400:
+          description: 잔액 충전 실패 - 잘못된 요청
+    get:
+      operationId: getBalance
+      tags:
+        - Balance
+      summary: 잔액 조회
+      description: 사용자의 잔액을 조회한다.
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            example: 'Bearer {token}'
+          required: false # 인증인가 일단 무시
+      responses:
+        200:
+          description: 잔액 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceResponse'
+        401:
+          description: 인증 실패
+        400:
+          description: 잘못된 요청
+
+  /api/products:
+    get:
+      operationId: getProducts
+      tags:
+        - Product
+      summary: 상품 조회
+      description: 상품 리스트를 조회한다.
+      responses:
+        200:
+          description: 상품 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productsResponse'
+        400:
+          description: 잘못된 요청
+
+  /api/products/popular:
+    get:
+      operationId: getPopularProducts
+      tags:
+        - Product
+      summary: 인기 상품 조회
+      description: 최근 3일간 가장 많이 팔린 상위 5개의 상품을 조회한다.
+      responses:
+        200:
+          description: 인기 상품 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/popularProductsResponse'
+        400:
+          description: 잘못된 요청
+
+  /api/orders:
+    post:
+      operationId: placeOrder
+      tags:
+        - Order
+      summary: 주문 및 결제
+      description: 사용자가 선택한 상품을 주문하고 결제를 진행한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/placeOrderRequest'
+      responses:
+        200:
+          description: 주문 및 결제 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderResponse'
+        400:
+          description: 주문 실패 - 잘못된 요청
+        401:
+          description: 인증 실패
+
+  /api/carts:
+    get:
+      operationId: getCart
+      tags:
+        - Cart
+      summary: 장바구니 조회
+      description: 사용자의 장바구니에 담긴 상품을 조회한다.
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+            example: 'Bearer {token}'
+          required: false # 인증인가 일단 무시
+      responses:
+        200:
+          description: 장바구니 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartResponse'
+        401:
+          description: 인증 실패
+
+  /api/cart-items:
+    post:
+      operationId: addToCart
+      tags:
+        - Cart
+      summary: 장바구니에 상품 추가
+      description: 장바구니에 상품을 추가한다.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addToCartRequest'
+      responses:
+        200:
+          description: 장바구니 추가 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartResponse'
+        400:
+          description: 잘못된 요청
+
+  /api/cart-items/{cartItemId}:
+    delete:
+      operationId: removeFromCart
+      tags:
+        - Cart
+      summary: 장바구니에서 상품 삭제
+      description: 장바구니에서 특정 상품을 삭제한다.
+      parameters:
+        - in: path
+          name: cartItemId
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: 장바구니 상품 삭제 성공
+        400:
+          description: 잘못된 요청
+
+components:
+  schemas:
+    chargeBalanceRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        amount:
+          type: number
+          format: float
+          example: 100.00
+      required:
+        - userId
+        - amount
+
+    balanceResponse:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        balance:
+          type: number
+          format: float
+          example: 150.00
+      required:
+        - userId
+        - balance
+
+    productsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: "Product A"
+          price:
+            type: number
+            format: float
+            example: 29.99
+          stockQuantity:
+            type: integer
+            example: 100
+      required:
+        - id
+        - name
+        - price
+        - stockQuantity
+
+    placeOrderRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: integer
+                example: 1
+              quantity:
+                type: integer
+                example: 2
+      required:
+        - userId
+        - items
+
+    orderResponse:
+      type: object
+      properties:
+        orderId:
+          type: integer
+          example: 1001
+        totalAmount:
+          type: number
+          format: float
+          example: 59.98
+        balanceAfterOrder:
+          type: number
+          format: float
+          example: 90.02
+      required:
+        - orderId
+        - totalAmount
+        - balanceAfterOrder
+
+    popularProductsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          productId:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: "Product A"
+          totalSales:
+            type: integer
+            example: 50
+      required:
+        - productId
+        - name
+        - totalSales
+
+    addToCartRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        productId:
+          type: integer
+          example: 1
+        quantity:
+          type: integer
+          example: 2
+      required:
+        - userId
+        - productId
+        - quantity
+
+    cartResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          productId:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: "Product A"
+          quantity:
+            type: integer
+            example: 2
+          price:
+            type: number
+            format: float
+            example: 29.99
+      required:
+        - productId
+        - name
+        - quantity
+        - price

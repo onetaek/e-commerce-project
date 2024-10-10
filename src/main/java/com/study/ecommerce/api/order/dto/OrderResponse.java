@@ -1,0 +1,4 @@
+package com.study.ecommerce.api.order.dto;
+
+public class OrderResponse {
+}
