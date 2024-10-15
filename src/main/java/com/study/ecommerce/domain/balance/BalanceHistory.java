@@ -2,6 +2,8 @@ package com.study.ecommerce.domain.balance;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,25 +15,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = "HANGHAE_BALANCES"
+	name = "HANGHAE_BALANCE_HISTORIES"
 )
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Balance {
+public class BalanceHistory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
+	private Long balanceId;
+
 	@Builder.Default
 	private Long amount = 0L;
 
-	@Column(nullable = false)
-	private String userId;
-
-	public void add(long amount) {
-		this.amount = this.amount + amount;
-	}
+	@Enumerated(EnumType.STRING)
+	private BalanceType type;
 }
