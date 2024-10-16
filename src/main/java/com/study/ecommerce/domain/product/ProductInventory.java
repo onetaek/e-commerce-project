@@ -13,21 +13,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = "HANGHAE_PRODUCTS"
+	name = "HANGHAE_PRODUCT_INVENTORIES"
 )
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
+public class ProductInventory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
-	private String name;
+	private Long productId;
 
 	@Column(nullable = false)
-	private Long price;
+	private int amount;
 }
