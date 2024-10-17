@@ -1,6 +1,6 @@
 # E-commerce 서버 구축
 
-## 프로젝트 문서 
+## 프로젝트 문서
 
 <details>
   <summary><b>프로젝트 Milestone</b></summary>
@@ -26,20 +26,20 @@
   <summary><b>시퀀스 다이어그램</b></summary>
 
 1. 잔액 충전 / 조회 시나리오
+
 ```mermaid
 sequenceDiagram
     participant 사용자
     participant 잔액
-
-    사용자->>잔액: 충전 요청 (금액)
+    사용자 ->> 잔액: 충전 요청 (금액)
     alt 충전 성공
-        잔액-->>사용자: 충전 완료
+        잔액 -->> 사용자: 충전 완료
     else 충전 실패
-        잔액-->>사용자: 충전 실패 응답
+        잔액 -->> 사용자: 충전 실패 응답
     end
 
-    사용자->>잔액: 잔액 조회 요청
-    잔액->>사용자: 잔액 정보 반환
+    사용자 ->> 잔액: 잔액 조회 요청
+    잔액 ->> 사용자: 잔액 정보 반환
 ```
 
 2. 상품 조회 시나리오
@@ -48,12 +48,12 @@ sequenceDiagram
 sequenceDiagram
     participant 사용자
     participant 상품
-
-    사용자->>상품: 상품 정보 조회 요청
-    상품->>사용자: 상품 목록 반환 (ID, 이름, 가격, 잔여수량)
+    사용자 ->> 상품: 상품 정보 조회 요청
+    상품 ->> 사용자: 상품 목록 반환 (ID, 이름, 가격, 잔여수량)
 ```
 
 3. 주문 / 결제 시나리오
+
 ```mermaid
 sequenceDiagram
     participant 사용자
@@ -61,117 +61,112 @@ sequenceDiagram
     participant 잔액
     participant 재고
     participant 결제
-
-    사용자->>주문: 주문 요청 (상품 ID, 수량 목록)
-    주문->>잔액: 잔액 확인 요청
+    사용자 ->> 주문: 주문 요청 (상품 ID, 수량 목록)
+    주문 ->> 잔액: 잔액 확인 요청
     alt 잔액 충분
-        잔액-->>주문: 잔액 충분
-
-        주문->>재고: 재고 확인 요청
+        잔액 -->> 주문: 잔액 충분
+        주문 ->> 재고: 재고 확인 요청
         alt 재고 충분
-            재고-->>주문: 재고 확인 성공
-
-            주문->>결제: 결제 요청
-            결제->>잔액: 잔액 차감 요청
+            재고 -->> 주문: 재고 확인 성공
+            주문 ->> 결제: 결제 요청
+            결제 ->> 잔액: 잔액 차감 요청
             alt 차감 성공
-                잔액-->>결제: 잔액 차감 완료
-                결제-->>주문: 결제 성공
-
-                주문->>재고: 재고 차감 요청
-                재고->>재고: 재고 차감 처리
-                재고-->>주문: 재고 차감 완료
-
-                주문-->>사용자: 주문 완료
+                잔액 -->> 결제: 잔액 차감 완료
+                결제 -->> 주문: 결제 성공
+                주문 ->> 재고: 재고 차감 요청
+                재고 ->> 재고: 재고 차감 처리
+                재고 -->> 주문: 재고 차감 완료
+                주문 -->> 사용자: 주문 완료
             else 차감 실패
-                잔액-->>결제: 차감 실패
-                결제-->>주문: 결제 실패
-                주문-->>사용자: 주문 실패 - 잔액 차감 오류
+                잔액 -->> 결제: 차감 실패
+                결제 -->> 주문: 결제 실패
+                주문 -->> 사용자: 주문 실패 - 잔액 차감 오류
             end
         else 재고 부족
-            재고-->>주문: 재고 부족
-            주문-->>사용자: 주문 실패 - 재고 부족
+            재고 -->> 주문: 재고 부족
+            주문 -->> 사용자: 주문 실패 - 재고 부족
         end
     else 잔액 부족
-        잔액-->>주문: 잔액 부족
-        주문-->>사용자: 주문 실패 - 잔액 부족
+        잔액 -->> 주문: 잔액 부족
+        주문 -->> 사용자: 주문 실패 - 잔액 부족
     end
 
 ```
 
 4. 인기 판매 상품 조회 시나리오
+
 ```mermaid
 sequenceDiagram
     participant 사용자
     participant 주문
     participant 상품
-
-    사용자->>주문: 인기 상품 조회 요청 (최근 3일)
-    주문->>상품: 판매 통계 조회 요청
-
-    상품->>주문: 인기 상품 목록 반환 (상위 5개)
-    주문->>사용자: 인기 상품 정보 반환
+    사용자 ->> 주문: 인기 상품 조회 요청 (최근 3일)
+    주문 ->> 상품: 판매 통계 조회 요청
+    상품 ->> 주문: 인기 상품 목록 반환 (상위 5개)
+    주문 ->> 사용자: 인기 상품 정보 반환
 ```
 
 5-1. 장바구니에 상품 추가
+
 ```mermaid
 sequenceDiagram
     participant 사용자
     participant 장바구니
     participant 장바구니항목
-
-    사용자->>장바구니: 상품 추가 요청 (상품 ID, 수량)
+    사용자 ->> 장바구니: 상품 추가 요청 (상품 ID, 수량)
     alt 장바구니 존재
-        장바구니->>장바구니항목: 상품 항목 조회 (상품 ID)
+        장바구니 ->> 장바구니항목: 상품 항목 조회 (상품 ID)
         alt 상품 존재
-            장바구니항목->>장바구니항목: 수량 업데이트
-            장바구니항목-->>장바구니: 업데이트 완료
+            장바구니항목 ->> 장바구니항목: 수량 업데이트
+            장바구니항목 -->> 장바구니: 업데이트 완료
         else 상품 미존재
-            장바구니->>장바구니항목: 새로운 상품 항목 추가
-            장바구니항목-->>장바구니: 추가 완료
+            장바구니 ->> 장바구니항목: 새로운 상품 항목 추가
+            장바구니항목 -->> 장바구니: 추가 완료
         end
     else 장바구니 미존재
-        장바구니->>장바구니: 새로운 장바구니 생성
-        장바구니->>장바구니항목: 상품 항목 추가
-        장바구니항목-->>장바구니: 추가 완료
+        장바구니 ->> 장바구니: 새로운 장바구니 생성
+        장바구니 ->> 장바구니항목: 상품 항목 추가
+        장바구니항목 -->> 장바구니: 추가 완료
     end
-    장바구니-->>사용자: 상품 추가 완료
+    장바구니 -->> 사용자: 상품 추가 완료
 
 ```
 
 5-2. 장바구니에서 상품 삭제
+
 ```mermaid
 sequenceDiagram
     participant 사용자
     participant 장바구니
     participant 장바구니항목
-
-    사용자->>장바구니: 상품 삭제 요청 (상품 ID)
-    장바구니->>장바구니항목: 상품 항목 조회 (상품 ID)
+    사용자 ->> 장바구니: 상품 삭제 요청 (상품 ID)
+    장바구니 ->> 장바구니항목: 상품 항목 조회 (상품 ID)
     alt 상품 존재
-        장바구니항목->>장바구니항목: 항목 삭제
-        장바구니항목-->>장바구니: 삭제 완료
-        장바구니-->>사용자: 상품 삭제 완료
+        장바구니항목 ->> 장바구니항목: 항목 삭제
+        장바구니항목 -->> 장바구니: 삭제 완료
+        장바구니 -->> 사용자: 상품 삭제 완료
     else 상품 미존재
-        장바구니-->>사용자: 삭제 실패 - 상품 없음
+        장바구니 -->> 사용자: 삭제 실패 - 상품 없음
     end
 
 ```
 
 5-3. 장바구니 조회
+
 ```mermaid
 sequenceDiagram
     participant 사용자
     participant 장바구니
     participant 장바구니항목
     participant 상품
-
-    사용자->>장바구니: 장바구니 조회 요청
-    장바구니->>장바구니항목: 장바구니 항목 조회
-    장바구니항목->>상품: 상품 정보 조회 (상품 ID)
-    상품-->>장바구니항목: 상품 정보 반환 (이름, 가격)
-    장바구니항목-->>장바구니: 장바구니 항목 정보 반환
-    장바구니-->>사용자: 장바구니 목록 반환 (상품 이름, 수량, 가격)
+    사용자 ->> 장바구니: 장바구니 조회 요청
+    장바구니 ->> 장바구니항목: 장바구니 항목 조회
+    장바구니항목 ->> 상품: 상품 정보 조회 (상품 ID)
+    상품 -->> 장바구니항목: 상품 정보 반환 (이름, 가격)
+    장바구니항목 -->> 장바구니: 장바구니 항목 정보 반환
+    장바구니 -->> 사용자: 장바구니 목록 반환 (상품 이름, 수량, 가격)
 ```
+
 </details>
 
 
@@ -196,7 +191,6 @@ erDiagram
         BIGINT product_id PK "PRIMARY KEY AUTO_INCREMENT"
         VARCHAR name "NOT NULL"
         DECIMAL price "NOT NULL"
-        INT stock_quantity "NOT NULL"
     }
     Order {
         BIGINT order_id PK "PRIMARY KEY AUTO_INCREMENT"
@@ -214,7 +208,7 @@ erDiagram
     Inventory {
         BIGINT inventory_id PK "PRIMARY KEY AUTO_INCREMENT"
         BIGINT product_id FK "UNIQUE"
-        INT available_quantity "NOT NULL"
+        INT amount "NOT NULL"
     }
     Payment {
         BIGINT payment_id PK "PRIMARY KEY AUTO_INCREMENT"
@@ -230,18 +224,18 @@ erDiagram
         BIGINT cart_item_id PK "PRIMARY KEY AUTO_INCREMENT"
         BIGINT cart_id FK "FOREIGN KEY"
         BIGINT product_id FK "FOREIGN KEY"
-        INT quantity "NOT NULL"
+        INT amount "NOT NULL"
     }
 
-    User ||--o| Balance : "has"
-    User ||--o{ Order : "places"
-    Order ||--|{ OrderItem : "contains"
-    Order ||--o| Payment : "has"
-    Product ||--|{ OrderItem : "included in"
-    Product ||--o| Inventory : "has"
-    User ||--o| Cart : "has"
-    Cart ||--|{ CartItem : "contains"
-    Product ||--|{ CartItem : "included in"
+    User ||--o| Balance: "has"
+    User ||--o{ Order: "places"
+    Order ||--|{ OrderItem: "contains"
+    Order ||--o| Payment: "has"
+    Product ||--|{ OrderItem: "included in"
+    Product ||--o| Inventory: "has"
+    User ||--o| Cart: "has"
+    Cart ||--|{ CartItem: "contains"
+    Product ||--|{ CartItem: "included in"
 ```
 
 </details>
@@ -251,6 +245,7 @@ erDiagram
   <summary><b>API 명세서</b></summary>
 
 http://hanghae.duckdns.org/
+
 - 위 링크를 통해 API 명세서를 확인할 수 있습니다.
 - OpenAPI CodeGenerator 를 사용하여 API 명세서를 생성하였습니다.
 - AWS를 통해 API서버를 배포하였습니다.
@@ -261,6 +256,7 @@ http://hanghae.duckdns.org/
   <summary><b>기술스택</b></summary>
 
 ### **1. Web Application Server**
+
 - **Java 17**
 - **Spring Boot**
 - **Spring Web**
@@ -269,25 +265,31 @@ http://hanghae.duckdns.org/
 - **JWT (Json Web Token)**
 
 ### **2. Database**
+
 - **H2** (Domain)
 - **Spring Data JPA**
 - **QueryDSL**
 
 ### **3. Messaging Solution**
+
 - **Spring for Apache Kafka**
 
 ### **4. Caching**
+
 - **Redis** (Caching)
 
 ### **5. Monitoring System**
+
 - **Prometheus** (Application Metadata)
 - **Grafana**
 - **Spring Actuator**
 
 ### **6. Documentation**
+
 - **Swagger**
 
 ### **7. Testing**
+
 - **Spring Boot Test**
 
 </details>
@@ -298,23 +300,26 @@ http://hanghae.duckdns.org/
   <summary><b>패키지 구조</b></summary>
 
 ```
-api/
+application/
+  └── 도메인Facade.java
+presentation/
   └── 도메인/ (product, order, user, cart...)
-      ├── controller/
-      ├── dto/
-      │   ├── request/
-      │   └── response/
-
+      ├── 도메인Controller.java
+      ├── usecase/
+      └── dto/
+          ├── request/
+          └── response/
 domain/
-  └── 도메인/ (product, order, user, cart...)
-      ├── models/
-      │   └── 도메인Entity
-      ├── service/
-      │   └── 도메인Service
-      ├── repositories/
-      │   └── 도메인Repository (I/F)
+  └── 도메인/
+      ├── 도메인Entity.java
+      ├── 도메인Service.java
+      └── 도메인Repository (I/F)
+infrastructure/
+  └── 도메인/
       └── infrastructure/
+          ├── 도메인JpaRepositoryImpl.java (구현체)
           ├── 도메인JpaRepository.java (JPA)
           └── 도메인QueryRepository.java (QueryDSL)
 ```
+
 </details>
