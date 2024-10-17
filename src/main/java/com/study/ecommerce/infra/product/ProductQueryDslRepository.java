@@ -18,7 +18,8 @@ public class ProductQueryDslRepository implements ProductQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
 	public List<Product> getList() {
-		return null;
+		var qProduct = QProduct.product;
+		return queryFactory.selectFrom(qProduct).fetch();
 	}
 
 	@Override
