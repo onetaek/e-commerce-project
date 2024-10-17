@@ -1,4 +1,4 @@
-package com.study.ecommerce.domain.order.service;
+package com.study.ecommerce.unit.order;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.study.ecommerce.domain.order.OrderItem;
 import com.study.ecommerce.domain.order.dto.OrderItemCommand;
 import com.study.ecommerce.domain.order.dto.OrderItemInfo;
+import com.study.ecommerce.domain.order.service.OrderItemCreateService;
 import com.study.ecommerce.infra.order.OrderItemCommandRepository;
 
 @ExtendWith(MockitoExtension.class)

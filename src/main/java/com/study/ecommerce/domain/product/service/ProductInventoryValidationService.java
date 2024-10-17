@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.study.ecommerce.domain.product.exception.ProductAmountExceedException;
 import com.study.ecommerce.domain.product.exception.ProductNotFoundException;
 import com.study.ecommerce.infra.product.ProductInventoryQueryRepository;
-import com.study.ecommerce.infra.product.ProductQueryRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductInventoryValidationService {
 
-	private final ProductQueryRepository productQueryRepository;
 	private final ProductInventoryQueryRepository productInventoryQueryRepository;
 
 	public void validateAmount(Long productId, long amount) {

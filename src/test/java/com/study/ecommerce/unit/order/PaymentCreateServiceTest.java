@@ -1,4 +1,4 @@
-package com.study.ecommerce.domain.order.service;
+package com.study.ecommerce.unit.order;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.Mockito.*;
@@ -14,6 +14,7 @@ import com.study.ecommerce.domain.order.Payment;
 import com.study.ecommerce.domain.order.PaymentStatus;
 import com.study.ecommerce.domain.order.dto.PaymentCommand;
 import com.study.ecommerce.domain.order.dto.PaymentInfo;
+import com.study.ecommerce.domain.order.service.PaymentCreateService;
 import com.study.ecommerce.infra.order.PaymentCommandRepository;
 
 @ExtendWith(MockitoExtension.class)

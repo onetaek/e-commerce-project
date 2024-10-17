@@ -6,7 +6,7 @@ import com.study.ecommerce.domain.order.Order;
 
 public record OrderInfo(
 	Long id,
-	Long userId,
+	String userId,
 	LocalDateTime orderDate,
 	Long totalPrice
 ) {

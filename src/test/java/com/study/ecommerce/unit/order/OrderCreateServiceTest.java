@@ -1,4 +1,4 @@
-package com.study.ecommerce.domain.order.service;
+package com.study.ecommerce.unit.order;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.Mockito.*;
@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.study.ecommerce.domain.order.Order;
 import com.study.ecommerce.domain.order.dto.OrderCommand;
 import com.study.ecommerce.domain.order.dto.OrderInfo;
+import com.study.ecommerce.domain.order.service.OrderCreateService;
 import com.study.ecommerce.infra.order.OrderCommandRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +31,7 @@ class OrderCreateServiceTest {
 	@DisplayName("주문을 정상적으로 생성할 수 있어야 한다.")
 	void testCreateOrder_Success() {
 		// given
-		Long userId = 1L;
+		String userId = "test-user";
 		LocalDateTime orderDate = LocalDateTime.now();
 		Long totalPrice = 5000L;
 
@@ -57,7 +58,7 @@ class OrderCreateServiceTest {
 	@DisplayName("주문 생성 중 저장 오류가 발생하면 예외가 발생해야 한다.")
 	void testCreateOrder_Failure_SaveError() {
 		// given
-		Long userId = 1L;
+		String userId = "test-user";
 		LocalDateTime orderDate = LocalDateTime.now();
 		Long totalPrice = 5000L;
 
