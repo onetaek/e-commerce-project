@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.study.ecommerce.domain.balance.Balance;
-import com.study.ecommerce.domain.balance.BalanceNotFoundException;
 import com.study.ecommerce.domain.balance.dto.BalanceInfo;
+import com.study.ecommerce.domain.balance.exception.BalanceNotFoundException;
 import com.study.ecommerce.domain.balance.service.BalanceQueryService;
 import com.study.ecommerce.infra.balance.BalanceQueryRepository;
 

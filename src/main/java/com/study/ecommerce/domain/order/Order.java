@@ -1,6 +1,5 @@
 package com.study.ecommerce.domain.order;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -29,13 +28,12 @@ public class Order {
 	private Long id;
 
 	@Column(nullable = false)
-	private Long userId;
+	private String userId;
 
 	@Builder.Default
 	@Column(nullable = false)
 	private LocalDateTime orderDate = LocalDateTime.now();
 
-	@Column(precision = 10, scale = 2)
-	private BigDecimal totalPrice;
+	private Long totalPrice;
 
 }

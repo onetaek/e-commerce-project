@@ -1,4 +1,4 @@
-package com.study.ecommerce.domain.balance;
+package com.study.ecommerce.domain.balance.exception;
 
 import com.study.ecommerce.common.exception.RollbackTriggeredException;
 
