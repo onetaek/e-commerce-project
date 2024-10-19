@@ -1,4 +1,4 @@
-package com.study.ecommerce.application;
+package com.study.ecommerce.application.balance;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +15,13 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BalanceFacade {
+public class BalanceChargeUseCase {
 
 	private final BalanceChargeService balanceChargeService;
 	private final BalanceHistoryAddService balanceHistoryAddService;
 
 	public BalanceInfo charge(BalanceChargeCommand command) {
-		// 잔액 충전
 		var balanceInfo = balanceChargeService.charge(command);
-
-		// 잔액 충전 이력저장
 		balanceHistoryAddService.add(
 			new BalanceHistoryAddCommand(
 				balanceInfo.id(),
@@ -32,7 +29,6 @@ public class BalanceFacade {
 				BalanceType.CHARGE
 			)
 		);
-
 		return balanceInfo;
 	}
 

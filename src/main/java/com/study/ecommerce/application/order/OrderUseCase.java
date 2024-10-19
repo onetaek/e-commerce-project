@@ -1,4 +1,4 @@
-package com.study.ecommerce.application;
+package com.study.ecommerce.application.order;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class OrderFacade {
+public class OrderUseCase {
 
 	private final BalanceValidationService balanceValidationService;
 	private final ProductInventoryValidationService productInventoryValidationService;
@@ -42,7 +42,6 @@ public class OrderFacade {
 			new OrderCommand(command.userId(), command.orderDate(), (long)command.price())
 		);
 
-		// TODO 주문 아이템 List 로 받을 수 있도록 리팩터링
 		// 주문 아이템 생성
 		orderItemCreateService.create(
 			new OrderItemCommand(orderInfo.id(), command.productId(), command.amount(), command.price())

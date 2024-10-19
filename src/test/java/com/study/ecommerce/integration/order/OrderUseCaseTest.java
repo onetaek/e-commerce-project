@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.study.ecommerce.application.OrderFacade;
+import com.study.ecommerce.application.order.OrderUseCase;
 import com.study.ecommerce.domain.balance.Balance;
-import com.study.ecommerce.domain.balance.exception.BalanceAmountExceedException;
+import com.study.ecommerce.domain.balance.BalanceException;
 import com.study.ecommerce.domain.balance.service.BalanceValidationService;
 import com.study.ecommerce.domain.order.dto.OrderInfo;
 import com.study.ecommerce.domain.order.service.OrderCreateService;
@@ -21,8 +21,8 @@ import com.study.ecommerce.domain.order.service.OrderItemCreateService;
 import com.study.ecommerce.domain.order.service.OrderSendToDataPlatFormService;
 import com.study.ecommerce.domain.order.service.PaymentCreateService;
 import com.study.ecommerce.domain.product.Product;
+import com.study.ecommerce.domain.product.ProductException;
 import com.study.ecommerce.domain.product.ProductInventory;
-import com.study.ecommerce.domain.product.exception.ProductAmountExceedException;
 import com.study.ecommerce.domain.product.service.ProductInventoryValidationService;
 import com.study.ecommerce.presentation.order.dto.OrderAndPaymentCommand;
 
@@ -30,10 +30,10 @@ import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @Transactional
-class OrderFacadeTest {
+class OrderUseCaseTest {
 
 	@Autowired
-	private OrderFacade orderFacade;
+	private OrderUseCase orderUseCase;
 
 	@Autowired
 	private BalanceValidationService balanceValidationService;
@@ -97,7 +97,7 @@ class OrderFacadeTest {
 			price);
 
 		// when
-		OrderInfo result = orderFacade.order(command);
+		OrderInfo result = orderUseCase.order(command);
 
 		// then
 		assertThat(result).isNotNull();
@@ -126,8 +126,8 @@ class OrderFacadeTest {
 			price);
 
 		// when & then
-		assertThatThrownBy(() -> orderFacade.order(command))
-			.isInstanceOf(ProductAmountExceedException.class);
+		assertThatThrownBy(() -> orderUseCase.order(command))
+			.isInstanceOf(ProductException.class);
 
 		// 잔액, 주문 생성 등의 로직이 호출되지 않아야 함
 	}
@@ -145,8 +145,8 @@ class OrderFacadeTest {
 			price);
 
 		// when & then
-		assertThatThrownBy(() -> orderFacade.order(command))
-			.isInstanceOf(BalanceAmountExceedException.class);
+		assertThatThrownBy(() -> orderUseCase.order(command))
+			.isInstanceOf(BalanceException.class);
 
 		// 주문 생성, 결제 등의 로직이 호출되지 않아야 함
 	}
@@ -164,7 +164,7 @@ class OrderFacadeTest {
 			price);
 
 		// when
-		OrderInfo result = orderFacade.order(command);
+		OrderInfo result = orderUseCase.order(command);
 
 		// then
 		assertThat(result).isNotNull();
