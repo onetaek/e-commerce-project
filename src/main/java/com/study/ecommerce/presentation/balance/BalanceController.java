@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.BalanceFacade;
+import com.study.ecommerce.application.balance.BalanceChargeUseCase;
 import com.study.ecommerce.domain.balance.service.BalanceQueryService;
 import com.study.ecommerce.presentation.balance.dto.BalanceChargeRequest;
 import com.study.ecommerce.presentation.balance.dto.BalanceResponse;
@@ -21,7 +21,7 @@ import openapi.api.BalanceApi;
 public class BalanceController implements BalanceApi {
 
 	private final BalanceQueryService balanceQueryService;
-	private final BalanceFacade balanceFacade;
+	private final BalanceChargeUseCase balanceChargeUseCase;
 
 	@GetMapping
 	public ResponseEntity<BalanceResponse> getOne(
@@ -38,7 +38,7 @@ public class BalanceController implements BalanceApi {
 		BalanceChargeRequest request
 	) {
 		return ResponseEntity.ok().body(
-			BalanceResponse.fromInfo(balanceFacade.charge(request.toCommand()))
+			BalanceResponse.fromInfo(balanceChargeUseCase.charge(request.toCommand()))
 		);
 	}
 }

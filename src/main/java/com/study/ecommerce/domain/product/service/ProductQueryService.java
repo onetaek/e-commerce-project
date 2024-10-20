@@ -23,7 +23,6 @@ public class ProductQueryService {
 	private final ProductQueryRepository productQueryRepository;
 	private final ProductInventoryQueryRepository productInventoryQueryRepository;
 
-	// TODO 검색 조건 추가
 	public List<ProductDetailInfo> getDetailList() {
 		List<Product> productList = productQueryRepository.getList();
 		Long[] productIds = productList.stream().map(Product::getId).toArray(Long[]::new);

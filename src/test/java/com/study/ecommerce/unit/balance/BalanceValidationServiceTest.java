@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.study.ecommerce.domain.balance.Balance;
-import com.study.ecommerce.domain.balance.exception.BalanceAmountExceedException;
+import com.study.ecommerce.domain.balance.BalanceException;
 import com.study.ecommerce.domain.balance.service.BalanceValidationService;
 import com.study.ecommerce.infra.balance.BalanceQueryRepository;
 
@@ -63,7 +63,7 @@ class BalanceValidationServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> balanceValidationService.validateAmount(userId, amountToValidate))
-			.isInstanceOf(BalanceAmountExceedException.class);
+			.isInstanceOf(BalanceException.class);
 
 		// 잔액이 부족하므로 예외 발생
 		verify(balanceQueryRepository, times(1)).getOne(userId);
@@ -80,7 +80,7 @@ class BalanceValidationServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> balanceValidationService.validateAmount(userId, amountToValidate))
-			.isInstanceOf(BalanceAmountExceedException.class);
+			.isInstanceOf(BalanceException.class);
 
 		// 잔액이 없으므로 예외 발생
 		verify(balanceQueryRepository, times(1)).getOne(userId);

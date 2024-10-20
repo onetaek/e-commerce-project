@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.study.ecommerce.domain.balance.Balance;
+import com.study.ecommerce.domain.balance.BalanceException;
 import com.study.ecommerce.domain.balance.dto.BalanceInfo;
-import com.study.ecommerce.domain.balance.exception.BalanceNotFoundException;
 import com.study.ecommerce.domain.balance.service.BalanceQueryService;
 import com.study.ecommerce.infra.balance.BalanceQueryRepository;
 
@@ -60,7 +60,7 @@ class BalanceQueryServiceTest {
 		when(balanceQueryRepository.getOne(anyString())).thenReturn(Optional.empty());
 
 		// when & then
-		assertThrows(BalanceNotFoundException.class, () -> balanceQueryService.getOne(userId));
+		assertThrows(BalanceException.class, () -> balanceQueryService.getOne(userId));
 
 		verify(balanceQueryRepository, times(1)).getOne(anyString());
 		verifyNoMoreInteractions(balanceQueryRepository);

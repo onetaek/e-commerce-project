@@ -12,9 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.study.ecommerce.domain.product.ProductException;
 import com.study.ecommerce.domain.product.ProductInventory;
-import com.study.ecommerce.domain.product.exception.ProductAmountExceedException;
-import com.study.ecommerce.domain.product.exception.ProductNotFoundException;
 import com.study.ecommerce.domain.product.service.ProductInventoryValidationService;
 import com.study.ecommerce.infra.product.ProductInventoryQueryRepository;
 
@@ -64,7 +63,7 @@ class ProductInventoryValidationServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> productInventoryValidationService.validateAmount(productId, amountToValidate))
-			.isInstanceOf(ProductAmountExceedException.class);
+			.isInstanceOf(ProductException.class);
 
 		// 재고가 부족하므로 예외 발생
 		verify(productInventoryQueryRepository, times(1)).getOne(productId);
@@ -81,7 +80,7 @@ class ProductInventoryValidationServiceTest {
 
 		// when & then
 		assertThatThrownBy(() -> productInventoryValidationService.validateAmount(productId, amountToValidate))
-			.isInstanceOf(ProductNotFoundException.class);
+			.isInstanceOf(ProductException.class);
 
 		// 상품이 존재하지 않으므로 예외 발생
 		verify(productInventoryQueryRepository, times(1)).getOne(productId);

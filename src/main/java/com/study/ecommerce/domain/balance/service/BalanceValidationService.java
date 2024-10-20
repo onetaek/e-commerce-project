@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.study.ecommerce.domain.balance.Balance;
-import com.study.ecommerce.domain.balance.exception.BalanceAmountExceedException;
+import com.study.ecommerce.domain.balance.BalanceException;
 import com.study.ecommerce.infra.balance.BalanceQueryRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class BalanceValidationService {
 				.build());
 
 		if (balance.getAmount() < amount) {
-			throw new BalanceAmountExceedException();
+			throw BalanceException.exceed();
 		}
 	}
 

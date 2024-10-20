@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.OrderFacade;
+import com.study.ecommerce.application.order.OrderUseCase;
 import com.study.ecommerce.presentation.order.dto.OrderAndPaymentCommand;
 import com.study.ecommerce.presentation.order.dto.OrderResponse;
 
@@ -17,12 +17,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-	private final OrderFacade orderFacade;
+	private final OrderUseCase orderUseCase;
 
 	@PostMapping
 	public ResponseEntity<OrderResponse> order(@RequestBody OrderAndPaymentCommand request) {
 		return ResponseEntity.ok().body(
-			OrderResponse.fromInfo(orderFacade.order(request))
+			OrderResponse.fromInfo(orderUseCase.order(request))
 		);
 	}
 }

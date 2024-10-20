@@ -39,6 +39,6 @@ class BalanceHistoryAddServiceTest {
 		balanceHistoryAddService.add(command);
 
 		// then
-		verify(balanceHistoryCommandRepository, times(1)).save(balanceHistory);
+		verify(balanceHistoryCommandRepository, times(1)).save(eq(balanceHistory));
 	}
 }
