@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.order.OrderUseCase;
+import com.study.ecommerce.application.order.OrderAndPaymentService;
 import com.study.ecommerce.presentation.order.dto.OrderAndPaymentCommand;
 import com.study.ecommerce.presentation.order.dto.OrderResponse;
 
@@ -17,12 +17,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-	private final OrderUseCase orderUseCase;
+	private final OrderAndPaymentService orderAndPaymentService;
 
+	/**
+	 * 주문과 결제를 수행한다.
+	 * @param request 주문정보
+	 * @return 주문 정보
+	 */
 	@PostMapping
 	public ResponseEntity<OrderResponse> order(@RequestBody OrderAndPaymentCommand request) {
 		return ResponseEntity.ok().body(
-			OrderResponse.fromInfo(orderUseCase.order(request))
+			OrderResponse.fromInfo(orderAndPaymentService.order(request))
 		);
 	}
 }

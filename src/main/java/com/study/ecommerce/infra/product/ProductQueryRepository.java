@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.study.ecommerce.domain.product.Product;
+import com.study.ecommerce.domain.product.dto.ProductOrderAmountInfo;
 
 @Repository
 public interface ProductQueryRepository {
@@ -13,6 +14,6 @@ public interface ProductQueryRepository {
 
 	Optional<Product> getOne(Long id);
 
-	List<Product> getPopularProducts();
+	List<ProductOrderAmountInfo> getOrderAmountByRecent3DayAndTop5();
 
 }

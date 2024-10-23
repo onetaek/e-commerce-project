@@ -7,38 +7,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.balance.BalanceChargeUseCase;
-import com.study.ecommerce.domain.balance.service.BalanceQueryService;
+import com.study.ecommerce.application.balance.BalanceChargeService;
+import com.study.ecommerce.application.balance.BalanceQueryService;
 import com.study.ecommerce.presentation.balance.dto.BalanceChargeRequest;
 import com.study.ecommerce.presentation.balance.dto.BalanceResponse;
 
 import lombok.RequiredArgsConstructor;
-import openapi.api.BalanceApi;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/balances")
-public class BalanceController implements BalanceApi {
+public class BalanceController {
 
 	private final BalanceQueryService balanceQueryService;
-	private final BalanceChargeUseCase balanceChargeUseCase;
+	private final BalanceChargeService balanceChargeService;
 
+	/**
+	 * 사용자의 잔액 정보를 조회한다.
+	 * @param userId 사용자 식별자
+	 * @return 사용자의 잔액 정보
+	 */
 	@GetMapping
 	public ResponseEntity<BalanceResponse> getOne(
 		@RequestParam String userId
 	) {
-		// TODO: 조회시 사용죄는 파라미터 객체로 수정하기 -> Request? Cond? 어떻게 나누어서 사용하는게 좋을지 고민중
 		return ResponseEntity.ok().body(
 			BalanceResponse.fromInfo(balanceQueryService.getOne(userId))
 		);
 	}
 
+	/**
+	 * 사용자의 잔액을 충전한다.
+	 * @param request 잔액 충전
+	 * @return 사용자의 잔액 정보
+	 */
 	@PatchMapping("charge")
 	public ResponseEntity<BalanceResponse> charge(
 		BalanceChargeRequest request
 	) {
 		return ResponseEntity.ok().body(
-			BalanceResponse.fromInfo(balanceChargeUseCase.charge(request.toCommand()))
+			BalanceResponse.fromInfo(balanceChargeService.charge(request.toCommand()))
 		);
 	}
 }

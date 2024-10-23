@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.domain.product.service.ProductQueryService;
+import com.study.ecommerce.application.product.ProductQueryService;
 import com.study.ecommerce.presentation.product.dto.ProductDetailResponse;
+import com.study.ecommerce.presentation.product.dto.ProductOrderAmountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,10 @@ public class ProductController {
 
 	private final ProductQueryService productQueryService;
 
+	/**
+	 * 상품상세정보(재고정보도 포함) 목록을 조회 한다.
+	 * @return 상품상세정보 목록
+	 */
 	@GetMapping
 	public ResponseEntity<List<ProductDetailResponse>> getProducts() {
 		return ResponseEntity.ok().body(
@@ -27,11 +32,13 @@ public class ProductController {
 	}
 
 	/**
-	 * 최근 3일간 가장 많이 팔린 상위 5개 상품 정보를 제공하는 API 를 작성합니다.
-	 * 통계 정보를 다루기 위한 기술적 고민을 충분히 해보도록 합니다.
+	 * 상위 5개 주문
+	 * @return 상품주문수량정보 목록
 	 */
-	// @GetMapping("popular")
-	// public List<ProductResponse> getPopularProducts() {
-	// 	return productFacade.getPopularProducts();
-	// }
+	@GetMapping("popular")
+	public ResponseEntity<List<ProductOrderAmountResponse>> getPopularProducts() {
+		return ResponseEntity.ok().body(
+			ProductOrderAmountResponse.from(productQueryService.getPopularProducts())
+		);
+	}
 }
