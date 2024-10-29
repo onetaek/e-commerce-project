@@ -1,6 +1,9 @@
 package com.study.ecommerce.presentation.cart;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,11 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.cart.CartAddItemService;
-import com.study.ecommerce.application.cart.CartQueryService;
-import com.study.ecommerce.application.cart.CartRemoveService;
-import com.study.ecommerce.presentation.cart.dto.CartAddRequest;
-import com.study.ecommerce.presentation.cart.dto.CartDetailResponse;
+import com.study.ecommerce.domain.cart.CartCommand;
+import com.study.ecommerce.domain.cart.CartService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,30 +20,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartController {
 
-	private final CartQueryService cartQueryService;
-	private final CartAddItemService cartAddItemService;
-	private final CartRemoveService cartRemoveService;
+	private final CartService cartService;
 
-	@GetMapping("/api/cart-items")
-	public ResponseEntity<CartDetailResponse> getCart(
+	@GetMapping("/api/carts")
+	public ResponseEntity<List<CartDto.Response>> getCart(
 		@RequestParam String userId
 	) {
-		cartQueryService.getCart(userId);
-		return ResponseEntity.ok().build();
+		var carts = cartService.getList(new CartCommand.Search(userId));
+		return ResponseEntity.ok().body(CartDto.Response.from(carts));
 	}
 
-	@PostMapping("/api/cart-items")
+	@PostMapping("/api/carts")
 	public ResponseEntity<Void> addToCart(
-		@RequestBody CartAddRequest request) {
-		cartAddItemService.add(request);
+		@RequestBody CartDto.AddRequest request) {
+		cartService.add(request.toCommand());
 		return ResponseEntity.ok().build();
 	}
 
-	@PostMapping("/api/cart-items/{id}")
+	@DeleteMapping("/api/carts/{id}")
 	public ResponseEntity<Void> removeFromCart(
 		@PathVariable Long id
 	) {
-		cartRemoveService.remove(id);
+		cartService.remove(
+			new CartCommand.Remove(id)
+		);
 		return ResponseEntity.ok().build();
 	}
 }

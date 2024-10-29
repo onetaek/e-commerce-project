@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.application.order.OrderAndPaymentService;
-import com.study.ecommerce.presentation.order.dto.OrderAndPaymentCommand;
-import com.study.ecommerce.presentation.order.dto.OrderResponse;
+import com.study.ecommerce.domain.order.OrderService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-	private final OrderAndPaymentService orderAndPaymentService;
+	private final OrderService orderService;
 
 	/**
 	 * 주문과 결제를 수행한다.
@@ -25,9 +23,8 @@ public class OrderController {
 	 * @return 주문 정보
 	 */
 	@PostMapping
-	public ResponseEntity<OrderResponse> order(@RequestBody OrderAndPaymentCommand request) {
-		return ResponseEntity.ok().body(
-			OrderResponse.fromInfo(orderAndPaymentService.order(request))
-		);
+	public ResponseEntity<Void> order(@RequestBody OrderDto.Request request) {
+		orderService.order(request.toCommand());
+		return ResponseEntity.ok().build();
 	}
 }

@@ -30,4 +30,10 @@ public class ProductInventory {
 
 	@Column(nullable = false)
 	private int amount;
+
+	public void subtract(int subTractAmount) {
+		if (amount < subTractAmount)
+			throw ProductException.inventoryAmountExceed();
+		this.amount = amount - subTractAmount;
+	}
 }
