@@ -2,16 +2,13 @@
  * 아래 블로그를 참고하여 Codegen 을 사용하였다.
  * https://velog.io/@junho5336/OpenAPI-CodeGenerator-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0
  */
-
-import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
 
     // openapi.generator 플러그인을 추가한다.
-    id 'org.openapi.generator' version '7.0.1'
+//    id 'org.openapi.generator' version '7.0.1'
 }
 
 group = 'com.study'
@@ -34,25 +31,25 @@ repositories {
 }
 
 // 이 설정을 해줌으로써 build/generated 내부에 있는 코드를 import하고 사용할 수 있게된다.
-sourceSets {
-    main {
-        java.srcDirs("$buildDir/generated")
-    }
-}
+//sourceSets {
+//    main {
+//        java.srcDirs("$buildDir/generated")
+//    }
+//}
 
-ext {
-    dirs = [
-            'contract'       : "$rootDir/contract",
-            'openApiGenerate': "$buildDir/openapi"
-    ]
-
-    openApiPackages = ['openapi.api', 'openapi.invoker', 'openapi.model']
-
-    generateOpenApiTasks = fileTree(dirs.get("contract"))
-            .files
-            .findAll { file -> file.name.endsWith('.yaml') }
-            .collect(file -> createOpenApiGenerateTask(file.name))
-}
+//ext {
+//    dirs = [
+//            'contract'       : "$rootDir/contract",
+//            'openApiGenerate': "$buildDir/openapi"
+//    ]
+//
+//    openApiPackages = ['openapi.api', 'openapi.invoker', 'openapi.model']
+//
+//    generateOpenApiTasks = fileTree(dirs.get("contract"))
+//            .files
+//            .findAll { file -> file.name.endsWith('.yaml') }
+//            .collect(file -> createOpenApiGenerateTask(file.name))
+//}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -81,75 +78,75 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.register("createOpenApi") {
-    doFirst {
-        println("Creating Code By OpenAPI...")
-    }
-    doLast {
-        println("OpenAPI Code created.")
-    }
-    dependsOn(generateOpenApiTasks)
-}
-
-tasks.register("moveGeneratedSources") {
-    doFirst {
-        println("Moving generated sources...")
-    }
-
-    doLast {
-        openApiPackages.each { packageName ->
-            def packagePath = packageName.replace(".", "/")
-            def originDir = file("${dirs.get('openApiGenerate')}/src/main/java/${packagePath}")
-            def destinationDir = file("$buildDir/generated/${packagePath}")
-            copy {
-                originDir = file("${dirs.get('openApiGenerate')}/src/main/java/${packagePath}")
-                destinationDir = file("$buildDir/generated/${packagePath}")
-                from originDir
-                into destinationDir
-            }
-        }
-        println 'Generated sources moved.'
-    }
-    dependsOn("createOpenApi")
-}
-
-tasks.register("cleanGeneratedDirectory") {
-    doFirst {
-        println("Cleaning generated directory...")
-    }
-    doLast {
-        def openApiGenerateDir = file(dirs.get('openApiGenerate'))
-        if (openApiGenerateDir.exists()) {
-            openApiGenerateDir.deleteDir()
-            println "Directory ${openApiGenerateDir} deleted."
-        } else {
-            println "Directory ${openApiGenerateDir} does not exist."
-        }
-    }
-    dependsOn("moveGeneratedSources")
-}
-
-tasks.named("compileJava") {
-    dependsOn("cleanGeneratedDirectory")
-}
-
-def createOpenApiGenerateTask(String fileName) {
-    tasks.register("openApiGenerate_$fileName", GenerateTask) {
-        getGeneratorName().set("spring")
-        getInputSpec().set("${dirs["contract"]}/$fileName")
-        getOutputDir().set(dirs.get("openApiGenerate") as String)
-        getApiPackage().set(openApiPackages[0] as String)
-        getInvokerPackage().set(openApiPackages[1] as String)
-        getModelPackage().set(openApiPackages[2] as String)
-        getConfigOptions().set(
-                [
-                        "dateLibrary"    : "spring",
-                        "useSpringBoot3" : "true",
-                        "useTags"        : "true",
-                        "openApiNullable": "false",
-                        "interfaceOnly"  : "true"
-                ]
-        )
-        getTemplateDir().set("${dirs.get('contract')}/template")
-    }
-}
+//tasks.register("createOpenApi") {
+//    doFirst {
+//        println("Creating Code By OpenAPI...")
+//    }
+//    doLast {
+//        println("OpenAPI Code created.")
+//    }
+//    dependsOn(generateOpenApiTasks)
+//}
+//
+//tasks.register("moveGeneratedSources") {
+//    doFirst {
+//        println("Moving generated sources...")
+//    }
+//
+//    doLast {
+//        openApiPackages.each { packageName ->
+//            def packagePath = packageName.replace(".", "/")
+//            def originDir = file("${dirs.get('openApiGenerate')}/src/main/java/${packagePath}")
+//            def destinationDir = file("$buildDir/generated/${packagePath}")
+//            copy {
+//                originDir = file("${dirs.get('openApiGenerate')}/src/main/java/${packagePath}")
+//                destinationDir = file("$buildDir/generated/${packagePath}")
+//                from originDir
+//                into destinationDir
+//            }
+//        }
+//        println 'Generated sources moved.'
+//    }
+//    dependsOn("createOpenApi")
+//}
+//
+//tasks.register("cleanGeneratedDirectory") {
+//    doFirst {
+//        println("Cleaning generated directory...")
+//    }
+//    doLast {
+//        def openApiGenerateDir = file(dirs.get('openApiGenerate'))
+//        if (openApiGenerateDir.exists()) {
+//            openApiGenerateDir.deleteDir()
+//            println "Directory ${openApiGenerateDir} deleted."
+//        } else {
+//            println "Directory ${openApiGenerateDir} does not exist."
+//        }
+//    }
+//    dependsOn("moveGeneratedSources")
+//}
+//
+//tasks.named("compileJava") {
+//    dependsOn("cleanGeneratedDirectory")
+//}
+//
+//def createOpenApiGenerateTask(String fileName) {
+//    tasks.register("openApiGenerate_$fileName", GenerateTask) {
+//        getGeneratorName().set("spring")
+//        getInputSpec().set("${dirs["contract"]}/$fileName")
+//        getOutputDir().set(dirs.get("openApiGenerate") as String)
+//        getApiPackage().set(openApiPackages[0] as String)
+//        getInvokerPackage().set(openApiPackages[1] as String)
+//        getModelPackage().set(openApiPackages[2] as String)
+//        getConfigOptions().set(
+//                [
+//                        "dateLibrary"    : "spring",
+//                        "useSpringBoot3" : "true",
+//                        "useTags"        : "true",
+//                        "openApiNullable": "false",
+//                        "interfaceOnly"  : "true"
+//                ]
+//        )
+//        getTemplateDir().set("${dirs.get('contract')}/template")
+//    }
+//}

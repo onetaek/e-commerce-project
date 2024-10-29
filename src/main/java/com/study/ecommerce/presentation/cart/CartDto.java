@@ -23,14 +23,16 @@ public class CartDto {
 	public record Response(
 		Long id,
 		Long productId,
-		int amount
+		int amount,
+		String userId
 	) {
 		public static List<Response> from(List<CartInfo.Info> cartInfos) {
 			return cartInfos.stream().map(v ->
 				new Response(
 					v.id(),
 					v.productId(),
-					v.amount()
+					v.amount(),
+					v.userId()
 				)
 			).toList();
 		}
