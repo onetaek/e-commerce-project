@@ -40,6 +40,7 @@ public class OrderService {
 	public void order(OrderCommand.Order command) {
 		// 상품 재고 차감
 		var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
+		productRepository.findByProductIdsForUpdate(productIds);
 		productInventorySubtract(command, productIds);
 
 		// 주문 생성

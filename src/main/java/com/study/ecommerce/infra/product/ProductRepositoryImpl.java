@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductRepositoryImpl implements ProductRepository {
 
 	private final JPAQueryFactory queryFactory;
+	private final ProductInventoryJpaRepository productInventoryJpaRepository;
 
 	public Optional<Product> getInventory(Long id) {
 		var qProduct = QProduct.product;
@@ -80,6 +81,10 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.orderBy(qOrderItem.amount.sum().desc())
 			.limit(5)
 			.fetch();
+	}
+
+	public List<ProductInventory> findByProductIdsForUpdate(Long... productIds) {
+		return productInventoryJpaRepository.findByProductIdsForUpdate(productIds);
 	}
 
 }
