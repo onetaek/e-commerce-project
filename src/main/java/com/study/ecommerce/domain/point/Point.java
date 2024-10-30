@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = "HANGHAE_BALANCES"
+	name = "HANGHAE_POINTS"
 )
 @Getter
 @Entity
