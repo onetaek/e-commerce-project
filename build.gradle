@@ -75,6 +75,11 @@ dependencies {
 
     // mysql
     implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // 비관적락 재시도를 도와주는 라이브러리
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework:spring-aspects'
+
 }
 
 tasks.named('test') {

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class ProductInventory {
 
 	@Column(nullable = false)
 	private int amount;
+
+	@Version
+	private Long version = 0L;  // 낙관적 락을 위한 버전 필드
 
 	public void subtract(int subTractAmount) {
 		if (amount < subTractAmount)

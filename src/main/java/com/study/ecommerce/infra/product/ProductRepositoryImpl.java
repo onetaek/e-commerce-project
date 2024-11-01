@@ -83,7 +83,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.fetch();
 	}
 
-	public List<ProductInventory> findByProductIdsForUpdate(Long... productIds) {
+	public List<ProductInventory> getInventoryListForUpdate(Long... productIds) {
 		return productInventoryJpaRepository.findByProductIdsForUpdate(productIds);
 	}
 

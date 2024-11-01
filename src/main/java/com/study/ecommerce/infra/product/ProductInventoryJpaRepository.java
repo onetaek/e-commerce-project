@@ -12,7 +12,7 @@ import com.study.ecommerce.domain.product.ProductInventory;
 import jakarta.persistence.LockModeType;
 
 public interface ProductInventoryJpaRepository extends JpaRepository<ProductInventory, Long> {
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Lock(LockModeType.OPTIMISTIC)
 	@Query("SELECT pi FROM ProductInventory pi WHERE pi.productId IN :productIds")
 	List<ProductInventory> findByProductIdsForUpdate(@Param("productIds") Long... productIds);
 }

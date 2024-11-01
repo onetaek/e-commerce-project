@@ -17,9 +17,9 @@ public class PointException extends RollbackTriggeredException {
 		);
 	}
 
-	public static PointException notFound() {
+	public static PointException notFound(String userId) {
 		return new PointException(
-			"잔액정보를 찾을 수 없습니다.",
+			"잔액정보를 찾을 수 없습니다. userId: " + userId,
 			HttpStatus.NOT_FOUND
 		);
 	}

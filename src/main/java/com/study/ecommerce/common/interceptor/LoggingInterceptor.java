@@ -43,18 +43,18 @@ public class LoggingInterceptor implements HandlerInterceptor {
 		}
 
 		// 요청 본문 로깅 (Post, Put일 경우)
-		if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
-			try (BufferedReader reader = request.getReader()) {
-				StringBuilder body = new StringBuilder();
-				String line;
-				while ((line = reader.readLine()) != null) {
-					body.append(line);
-				}
-				log.info("Request Body: {}", body);
-			} catch (IOException e) {
-				log.error("Failed to read the request body", e);
-			}
-		}
+//		if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
+//			try (BufferedReader reader = request.getReader()) {
+//				StringBuilder body = new StringBuilder();
+//				String line;
+//				while ((line = reader.readLine()) != null) {
+//					body.append(line);
+//				}
+//				log.info("Request Body: {}", body);
+//			} catch (IOException e) {
+//				log.error("Failed to read the request body", e);
+//			}
+//		}
 
 		return true;
 	}

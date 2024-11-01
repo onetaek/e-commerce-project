@@ -1,9 +1,14 @@
 package com.study.ecommerce.domain.order;
 
+import com.study.ecommerce.domain.product.ProductInventory;
+import com.study.ecommerce.infra.product.ProductInventoryJpaRepository;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,10 +42,15 @@ public class OrderService {
 	 *     <li>유저 포인트 이력 저장</li>
 	 * </ol>
 	 */
+	@Retryable(
+			value = OptimisticLockingFailureException.class,
+			maxAttempts = 100,
+			backoff = @Backoff(delay = 500)
+	)
+	@Transactional
 	public void order(OrderCommand.Order command) {
 		// 상품 재고 차감
 		var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
-		productRepository.findByProductIdsForUpdate(productIds);
 		productInventorySubtract(command, productIds);
 
 		// 주문 생성
@@ -61,7 +71,7 @@ public class OrderService {
 		);
 
 		// 유저 포인트 차감
-		var point = pointRepository.getOne(command.userId()).orElseThrow(PointException::notFound);
+		var point = pointRepository.getOne(command.userId()).orElseThrow(() -> PointException.notFound(command.userId()));
 		point.use(sumPrice);
 
 		// 유저 포인트 이력 저장
@@ -85,10 +95,11 @@ public class OrderService {
 		var commandProducts = command.products().stream()
 			.collect(Collectors.toMap(OrderCommand.Order.Product::productId, Function.identity()));
 		var inventoryList = productRepository.getInventoryList(productIds);
+//		var inventoryList = productRepository.getInventoryListForUpdate(productIds);
 
-		inventoryList.forEach(v -> {
-			var commandProduct = commandProducts.get(v.getProductId());
-			v.subtract(commandProduct.amount());
-		});
+		for (ProductInventory inventory : inventoryList) {
+			var commandProduct = commandProducts.get(inventory.getProductId());
+			inventory.subtract(commandProduct.amount());
+		}
 	}
 }

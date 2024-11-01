@@ -17,5 +17,5 @@ public interface ProductRepository {
 
 	List<ProductInfo.OrderAmount> getOrderAmountByRecent3DayAndTop5();
 
-	List<ProductInventory> findByProductIdsForUpdate(Long... productIds);
+	List<ProductInventory> getInventoryListForUpdate(Long... productIds);
 }

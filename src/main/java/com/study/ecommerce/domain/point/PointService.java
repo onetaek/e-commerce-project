@@ -17,7 +17,7 @@ public class PointService {
 	 */
 	public PointInfo.Info getOne(String userId) {
 		return PointInfo.Info.from(
-			pointRepository.getOne(userId).orElseThrow(PointException::notFound)
+			pointRepository.getOne(userId).orElseThrow(() -> PointException.notFound(userId))
 		);
 	}
 
