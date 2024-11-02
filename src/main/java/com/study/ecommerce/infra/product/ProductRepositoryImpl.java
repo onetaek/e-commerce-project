@@ -1,5 +1,6 @@
 package com.study.ecommerce.infra.product;
 
+import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,7 @@ import com.study.ecommerce.domain.product.QProduct;
 import com.study.ecommerce.domain.product.QProductInventory;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -48,12 +50,14 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.fetch();
 	}
 
+	@Transactional
 	@Override
 	public List<ProductInventory> getInventoryList(Long... productIds) {
 		var productInventory = QProductInventory.productInventory;
 		return queryFactory.selectFrom(productInventory)
-			.where(productInventory.productId.in(productIds))
-			.fetch();
+				.where(productInventory.productId.in(productIds))
+				.setLockMode(LockModeType.PESSIMISTIC_READ)  // 비관적 읽기 락 설정
+		    .fetch();
 	}
 
 	@Override
@@ -82,9 +86,4 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.limit(5)
 			.fetch();
 	}
-
-	public List<ProductInventory> getInventoryListForUpdate(Long... productIds) {
-		return productInventoryJpaRepository.findByProductIdsForUpdate(productIds);
-	}
-
 }

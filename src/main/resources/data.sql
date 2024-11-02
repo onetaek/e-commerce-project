@@ -213,9 +213,9 @@ VALUES (1, 90, '상품1'),
        (5, 80, '상품5');
 
 -- 상품 재고
-INSERT INTO hanghae_product_inventories (amount, id, product_id, version)
-VALUES (1000, 1, 1, 0),
-       (1000, 2, 2, 0),
-       (1000, 3, 3, 0),
-       (1000, 4, 4, 0),
-       (1000, 5, 5, 0);
+INSERT INTO hanghae_product_inventories (amount, id, product_id)
+VALUES (1000, 1, 1),
+       (1000, 2, 2),
+       (1000, 3, 3),
+       (1000, 4, 4),
+       (1000, 5, 5);

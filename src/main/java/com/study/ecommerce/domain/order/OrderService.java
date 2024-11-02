@@ -1,14 +1,10 @@
 package com.study.ecommerce.domain.order;
 
 import com.study.ecommerce.domain.product.ProductInventory;
-import com.study.ecommerce.infra.product.ProductInventoryJpaRepository;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,11 +38,6 @@ public class OrderService {
 	 *     <li>유저 포인트 이력 저장</li>
 	 * </ol>
 	 */
-	@Retryable(
-			value = OptimisticLockingFailureException.class,
-			maxAttempts = 100,
-			backoff = @Backoff(delay = 500)
-	)
 	@Transactional
 	public void order(OrderCommand.Order command) {
 		// 상품 재고 차감
