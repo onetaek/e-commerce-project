@@ -46,6 +46,7 @@ public class ExceptionControllerAdvisor {
 	/**
 	 * Custom Exception
 	 */
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(RollbackTriggeredException.class)
 	public ErrorResponse rollBackException(RollbackTriggeredException e) {
 		log.info("Custom Exception: %s", e);
@@ -58,6 +59,7 @@ public class ExceptionControllerAdvisor {
 	/**
 	 * DataAccess Exception
 	 */
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(DataAccessException.class)
 	public ErrorResponse dataAccessException(DataAccessException e) {
 		log.error("DataAccess Exception: %s", e);
@@ -70,6 +72,7 @@ public class ExceptionControllerAdvisor {
 	/**
 	 * Unexpected Exception
 	 */
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public ErrorResponse unexpectedException(Exception e) {
 		log.error("Unexpected Exception: %s", e);

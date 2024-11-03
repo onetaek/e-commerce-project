@@ -1,14 +1,9 @@
 package com.study.ecommerce.domain.order;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +18,7 @@ import com.study.ecommerce.domain.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -30,7 +26,6 @@ public class OrderService {
 	private final ProductRepository productRepository;
 	private final PointRepository pointRepository;
 	private final OrderSend orderSend;
-	private final RedissonClient redissonClient;
 
 	/**
 	 * <h1>주문 프로세스</h1>
@@ -43,30 +38,10 @@ public class OrderService {
 	 *     <li>유저 포인트 이력 저장</li>
 	 * </ol>
 	 */
-	public void order(OrderCommand.Order command) {
-		var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
-
-		// 락 획득
-		List<RLock> locks = Arrays.stream(productIds).map(v -> redissonClient.getLock("productId:" + v)).toList();
-		try {
-			// 모든 락을 획득 (최대 10초 동안 기다리고, 10초 동안 유지)
-			for (RLock lock : locks) {
-				lock.lock(10, TimeUnit.SECONDS);
-			}
-
-			// 락을 획득한 이후 트랜잭션 시작
-			processOrderWithTransaction(command, productIds);
-		} finally {
-			// 락 해제
-			for (RLock lock : locks) {
-				lock.unlock();
-			}
-		}
-	}
-
 	@Transactional
-	public void processOrderWithTransaction(OrderCommand.Order command, Long[] productIds) {
+	public void order(OrderCommand.Order command) {
 		// 상품 재고 차감
+		var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
 		productInventorySubtract(command, productIds);
 
 		// 주문 생성
@@ -102,6 +77,12 @@ public class OrderService {
 		orderSend.send();
 	}
 
+	/**
+	 * <p>
+	 * ProductInventory 클래스의 subtract 메서드가 중요한 로직이고
+	 * 지금 메서드는 단순히 매핑하는 것이므로 테스트가 필요하지 않다고 생각하였다.
+	 * </p>
+	 */
 	private void productInventorySubtract(OrderCommand.Order command, Long[] productIds) {
 		var commandProducts = command.products().stream()
 			.collect(Collectors.toMap(OrderCommand.Order.Product::productId, Function.identity()));
