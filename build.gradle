@@ -80,6 +80,9 @@ dependencies {
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
 
+    // redis db
+    implementation 'org.redisson:redisson:3.20.0'
+
 }
 
 tasks.named('test') {

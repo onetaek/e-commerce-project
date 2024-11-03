@@ -27,3 +27,6 @@ spring:
   sql:
     init:
       mode: always
+
+  redission:
+    address: redis://localhost:6379

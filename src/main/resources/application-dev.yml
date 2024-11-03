@@ -21,3 +21,6 @@ spring:
   sql:
     init:
       mode: never
+
+  redission:
+    address: redis://redis-server:6379
