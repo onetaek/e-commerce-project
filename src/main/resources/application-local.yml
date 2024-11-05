@@ -27,6 +27,11 @@ spring:
   sql:
     init:
       mode: always
+      encoding: UTF-8
+      data-locations: >
+        classpath:/data/init.sql
+      #        calsspath:/data/order_scenario.sql
+      continue-on-error: true
 
   redission:
     address: redis://localhost:6379
