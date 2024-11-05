@@ -13,7 +13,7 @@ public class ProductInfo {
 		Long productId,
 		String productName,
 		Long productPrice,
-		Long orderAmount
+		Integer orderAmount
 	) {
 	}
 

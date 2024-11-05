@@ -28,7 +28,7 @@ public class ProductDto {
 		Long productId,
 		String productName,
 		Long productPrice,
-		Long orderAmount
+		Integer orderAmount
 	) {
 		public static List<ProductDto.OrderAmountResponse> from(
 			List<ProductInfo.OrderAmount> products) {

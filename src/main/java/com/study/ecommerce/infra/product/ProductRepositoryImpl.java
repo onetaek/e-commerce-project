@@ -81,7 +81,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 					LocalDateTime.now()
 				)
 			)
-			.groupBy(qOrderItem.productId)
+			.groupBy(
+				qProduct.id,
+				qProduct.name,
+				qProduct.price
+			)
 			.orderBy(qOrderItem.amount.sum().desc())
 			.limit(5)
 			.fetch();
