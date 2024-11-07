@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.study.ecommerce.domain.product.ProductService;
@@ -34,12 +34,12 @@ public class ProductController {
 	 * 상품상세정보를 조회 한다.
 	 * @return 상품상세정보
 	 */
-	@GetMapping(params = "productId")
+	@GetMapping("{id}")
 	public ResponseEntity<ProductDto.AmountResponse> getProduct(
-		@RequestParam(name = "productId") Long productId
+		@PathVariable(name = "id") Long id
 	) {
 		return ResponseEntity.ok().body(
-			ProductDto.AmountResponse.from(productService.getDetail(productId))
+			ProductDto.AmountResponse.from(productService.getDetail(id))
 		);
 	}
 
