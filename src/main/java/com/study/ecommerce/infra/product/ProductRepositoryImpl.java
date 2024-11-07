@@ -2,7 +2,6 @@ package com.study.ecommerce.infra.product;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,16 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class ProductRepositoryImpl implements ProductRepository {
 
 	private final JPAQueryFactory queryFactory;
-	private final ProductInventoryJpaRepository productInventoryJpaRepository;
-
-	public Optional<Product> getInventory(Long id) {
-		var qProduct = QProduct.product;
-		return Optional.ofNullable(
-			queryFactory.selectFrom(qProduct)
-				.where(qProduct.id.eq(id))
-				.fetchOne()
-		);
-	}
 
 	public List<Product> getList() {
 		var qProduct = QProduct.product;
@@ -89,5 +78,21 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.orderBy(qOrderItem.amount.sum().desc())
 			.limit(5)
 			.fetch();
+	}
+
+	@Override
+	public Product getById(Long productId) {
+		var qProduct = QProduct.product;
+		return queryFactory.selectFrom(qProduct)
+			.where(qProduct.id.eq(productId))
+			.fetchOne();
+	}
+
+	@Override
+	public ProductInventory getInventoryByProductId(Long productId) {
+		var qProductInventory = QProductInventory.productInventory;
+		return queryFactory.selectFrom(qProductInventory)
+			.where(qProductInventory.productId.eq(productId))
+			.fetchOne();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.study.ecommerce.domain.product.ProductService;
@@ -23,9 +24,22 @@ public class ProductController {
 	 * @return 상품상세정보 목록
 	 */
 	@GetMapping
-	public ResponseEntity<List<ProductDto.AmountResponse>> getProducts() {
+	public ResponseEntity<List<ProductDto.AmountResponse>> getProductList() {
 		return ResponseEntity.ok().body(
 			ProductDto.AmountResponse.from(productService.getDetailList())
+		);
+	}
+
+	/**
+	 * 상품상세정보를 조회 한다.
+	 * @return 상품상세정보
+	 */
+	@GetMapping(params = "productId")
+	public ResponseEntity<ProductDto.AmountResponse> getProduct(
+		@RequestParam(name = "productId") Long productId
+	) {
+		return ResponseEntity.ok().body(
+			ProductDto.AmountResponse.from(productService.getDetail(productId))
 		);
 	}
 

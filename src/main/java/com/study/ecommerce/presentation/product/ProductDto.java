@@ -22,6 +22,15 @@ public class ProductDto {
 					product.amount()
 				)).toList();
 		}
+
+		public static ProductDto.AmountResponse from(
+			ProductInfo.Amount product) {
+			return new ProductDto.AmountResponse(
+				product.id(),
+				product.name(),
+				product.price(),
+				product.amount());
+		}
 	}
 
 	public record OrderAmountResponse(
