@@ -28,6 +28,7 @@ public class PointService {
 	 *     <li>한명의 유저가 각각 자신의 포인트를 충전하는 것이므로 동시성 제어는 하지 않는다.</li>
 	 * </ul>
 	 */
+	@Transactional
 	public void charge(PointCommand.Charge command) {
 		var userId = command.userId();
 
