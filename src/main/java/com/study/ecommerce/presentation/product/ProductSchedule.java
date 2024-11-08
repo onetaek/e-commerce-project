@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.CacheManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ import com.study.ecommerce.domain.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
-// @EnableScheduling
+@EnableScheduling
 @RequiredArgsConstructor
 public class ProductSchedule {
 
