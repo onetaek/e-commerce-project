@@ -33,7 +33,4 @@ public class Order {
 	@Builder.Default
 	@Column(nullable = false)
 	private LocalDateTime orderDate = LocalDateTime.now();
-
-	private Long totalPrice;
-
 }

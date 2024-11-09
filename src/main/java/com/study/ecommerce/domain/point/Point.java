@@ -1,9 +1,7 @@
-package com.study.ecommerce.domain.order;
+package com.study.ecommerce.domain.point;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,39 +13,45 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Table(
-	name = "HANGHAE_PAYMENTS"
+	name = "HANGHAE_POINTS"
 )
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Payment {
+public class Point {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long orderId;
+	@Builder.Default
+	private Long amount = 0L;
 
 	@Column(nullable = false)
-	private Long price;
+	private String userId;
 
-	@Enumerated(EnumType.STRING)
-	private Status status;
+	public void charge(long amount) {
+		this.amount = this.amount + amount;
+	}
+
+	public void use(Long useAmount) {
+		if (amount < useAmount)
+			throw PointException.exceed();
+		this.amount = this.amount - useAmount;
+	}
 
 	@Getter
-	enum Status {
-
-		STANDBY("대기", 0, ""),
-		COMPLETE("완료", 10, "");
+	public enum Type {
+		CHARGE("충전", 0, ""),
+		USE("사용", 10, "");
 
 		private final String code;
 		private final String displayValue;
 		private final Integer sequence;
 		private final String description;
 
-		Status(String displayValue, Integer sequence, String description) {
+		Type(String displayValue, Integer sequence, String description) {
 			this.code = this.name();
 			this.displayValue = displayValue;
 			this.sequence = sequence;

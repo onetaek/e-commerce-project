@@ -1,26 +1,16 @@
 package com.study.ecommerce.common.exception;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
 
 @Getter
-public abstract class RollbackTriggeredException extends RuntimeException {
+public class RollbackTriggeredException extends RuntimeException {
+	private final String message;
+	private final HttpStatus code;
 
-	public final Map<String, String> validation = new HashMap<>();
-
-	public RollbackTriggeredException(String message) {
-		super(message);
-	}
-
-	public RollbackTriggeredException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public abstract int getStatusCode();
-
-	public void addValidation(String fieldName, String message) {
-		validation.put(fieldName, message);
+	public RollbackTriggeredException(String message, HttpStatus code) {
+		this.message = message;
+		this.code = code;
 	}
 }

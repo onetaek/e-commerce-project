@@ -1,25 +1,3 @@
 spring:
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
-      settings:
-        web-allow-others: true
-
-  datasource:
-    url: jdbc:h2:mem:~/ecommerce
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: never
+  profiles:
+    active: local-mssql

@@ -1,35 +1,35 @@
 package com.study.ecommerce.common.aop;
 
-import java.io.IOException;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.study.ecommerce.common.exception.ErrorResponse;
 import com.study.ecommerce.common.exception.RollbackTriggeredException;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionControllerAdvisor {
 
-	private final HttpServletRequest httpServletRequest;
-
+	/**
+	 * Spring Validation Exception
+	 */
 	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ErrorResponse invalidRequestHandler(MethodArgumentNotValidException e) {
+		log.info("Spring Validation Exception: %s", e);
 		ErrorResponse response = ErrorResponse.builder()
 			.code(HttpStatus.BAD_REQUEST.toString())
 			.message("잘못된 요청입니다.")
@@ -43,27 +43,43 @@ public class ExceptionControllerAdvisor {
 		return response;
 	}
 
+	/**
+	 * Custom Exception
+	 */
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(RollbackTriggeredException.class)
-	public ResponseEntity<ErrorResponse> rollBackException(RollbackTriggeredException e) throws IOException {
-		if (isAjax(httpServletRequest)) {
-			int statusCode = e.getStatusCode();
-
-			ErrorResponse body = ErrorResponse.builder()
-				.code(String.valueOf(statusCode))
-				.message(e.getMessage())
-				.validation(e.getValidation())
-				.build();
-
-			return ResponseEntity.status(statusCode)
-				.body(body);
-		} else {
-			throw e;
-		}
+	public ErrorResponse rollBackException(RollbackTriggeredException e) {
+		log.info("Custom Exception: %s", e);
+		return ErrorResponse.builder()
+			.code(e.getCode().toString())
+			.message(e.getMessage())
+			.build();
 	}
 
-	private boolean isAjax(HttpServletRequest request) {
-		String accept = request.getHeader("accept");
-		return accept != null && accept.contains("application/json");
+	/**
+	 * DataAccess Exception
+	 */
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(DataAccessException.class)
+	public ErrorResponse dataAccessException(DataAccessException e) {
+		log.error("DataAccess Exception: %s", e);
+		return ErrorResponse.builder()
+			.code(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+			.message(e.getMessage())
+			.build();
+	}
+
+	/**
+	 * Unexpected Exception
+	 */
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler(Exception.class)
+	public ErrorResponse unexpectedException(Exception e) {
+		log.error("Unexpected Exception: %s", e);
+		return ErrorResponse.builder()
+			.code(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+			.message(e.getMessage())
+			.build();
 	}
 
 }

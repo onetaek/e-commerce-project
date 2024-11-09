@@ -1,36 +1,49 @@
 package com.study.ecommerce.presentation.cart;
 
-
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 
-import openapi.api.CartApi;
-import openapi.model.AddToCartRequest;
-import openapi.model.CartResponseInner;
+import com.study.ecommerce.domain.cart.CartCommand;
+import com.study.ecommerce.domain.cart.CartService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
-public class CartController implements CartApi {
-	@Override
-	public Optional<NativeWebRequest> getRequest() {
-		return CartApi.super.getRequest();
+@RequiredArgsConstructor
+public class CartController {
+
+	private final CartService cartService;
+
+	@GetMapping("/api/carts")
+	public ResponseEntity<List<CartDto.Response>> getCart(
+		@RequestParam String userId
+	) {
+		var carts = cartService.getList(new CartCommand.Search(userId));
+		return ResponseEntity.ok().body(CartDto.Response.from(carts));
 	}
 
-	@Override
-	public ResponseEntity<List<CartResponseInner>> addToCart(AddToCartRequest addToCartRequest) {
-		return CartApi.super.addToCart(addToCartRequest);
+	@PostMapping("/api/carts")
+	public ResponseEntity<Void> addToCart(
+		@RequestBody CartDto.AddRequest request) {
+		cartService.add(request.toCommand());
+		return ResponseEntity.ok().build();
 	}
 
-	@Override
-	public ResponseEntity<List<CartResponseInner>> getCart(String authorization) {
-		return CartApi.super.getCart(authorization);
-	}
-
-	@Override
-	public ResponseEntity<Void> removeFromCart(Integer cartItemId) {
-		return CartApi.super.removeFromCart(cartItemId);
+	@DeleteMapping("/api/carts/{id}")
+	public ResponseEntity<Void> removeFromCart(
+		@PathVariable Long id
+	) {
+		cartService.remove(
+			new CartCommand.Remove(id)
+		);
+		return ResponseEntity.ok().build();
 	}
 }
