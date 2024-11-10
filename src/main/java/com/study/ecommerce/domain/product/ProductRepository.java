@@ -11,9 +11,9 @@ public interface ProductRepository {
 
 	List<Product> getList(Long... ids);
 
-	List<ProductInventory> getInventoryList(Long... ids);
+	List<ProductInventory> getInventoryListWithLock(Long... ids);
 
-	List<ProductInfo.OrderAmount> getOrderAmountByRecent3DayAndTop5();
+	List<ProductInfo.OrderAmount> getOrderAmountByOrderDateAndLimit(ProductCommand.Search command);
 
 	Product getById(Long productId);
 

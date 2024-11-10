@@ -1,16 +1,15 @@
 package com.study.ecommerce.infra.product;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.ecommerce.domain.order.QOrder;
 import com.study.ecommerce.domain.order.QOrderItem;
 import com.study.ecommerce.domain.product.Product;
+import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductInfo;
 import com.study.ecommerce.domain.product.ProductInventory;
 import com.study.ecommerce.domain.product.ProductRepository;
@@ -39,9 +38,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.fetch();
 	}
 
-	@Transactional
 	@Override
-	public List<ProductInventory> getInventoryList(Long... productIds) {
+	public List<ProductInventory> getInventoryListWithLock(Long... productIds) {
 		var productInventory = QProductInventory.productInventory;
 		return queryFactory.selectFrom(productInventory)
 			.where(productInventory.productId.in(productIds))
@@ -50,7 +48,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 	}
 
 	@Override
-	public List<ProductInfo.OrderAmount> getOrderAmountByRecent3DayAndTop5() {
+	public List<ProductInfo.OrderAmount> getOrderAmountByOrderDateAndLimit(
+		ProductCommand.Search command
+	) {
 		var qOrder = QOrder.order;
 		var qOrderItem = QOrderItem.orderItem;
 		var qProduct = QProduct.product;
@@ -62,12 +62,13 @@ public class ProductRepositoryImpl implements ProductRepository {
 					qProduct.price,
 					qOrderItem.amount.sum()
 				)
-			).from(qOrderItem).join(qOrder).on(qOrderItem.orderId.eq(qOrder.id))
-			.from(qOrderItem).join(qProduct).on(qProduct.id.eq(qOrderItem.productId))
+			).from(qProduct)
+			.join(qOrderItem).on(qOrderItem.productId.eq(qProduct.id))
+			.join(qOrder).on(qOrder.id.eq(qOrderItem.orderId))
 			.where(
 				qOrder.orderDate.between(
-					LocalDateTime.now().minusDays(3L),
-					LocalDateTime.now()
+					command.fromOrderDate(),
+					command.toOrderDate()
 				)
 			)
 			.groupBy(
@@ -76,7 +77,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 				qProduct.price
 			)
 			.orderBy(qOrderItem.amount.sum().desc())
-			.limit(5)
+			.limit(command.limit())
 			.fetch();
 	}
 

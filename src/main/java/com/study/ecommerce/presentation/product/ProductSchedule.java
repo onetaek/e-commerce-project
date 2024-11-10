@@ -1,5 +1,6 @@
 package com.study.ecommerce.presentation.product;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.springframework.cache.CacheManager;
@@ -8,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.study.ecommerce.common.constant.CacheConstants;
+import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,13 @@ public class ProductSchedule {
 	@Scheduled(fixedRate = 1200000)
 	public void updatePopularProductsCache() {
 		// 새로운 데이터를 DB에서 조회
-		var updatedData = productService.getPopularProducts();
+		var updatedData = productService.getPopularProducts(
+			new ProductCommand.Search(
+				LocalDateTime.now().minusDays(3),
+				LocalDateTime.now(),
+				5L
+			)
+		);
 
 		// 캐시 덮어쓰기
 		Objects.requireNonNull(cacheManager.getCache(CacheConstants.POPULAR_PRODUCTS_CACHE))

@@ -1,10 +1,26 @@
 package com.study.ecommerce.presentation.product;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductInfo;
 
 public class ProductDto {
+
+	public record PopularRequest(
+		LocalDateTime fromOrderDate,
+		LocalDateTime toOrderDate,
+		Long limit
+	){
+		public ProductCommand.Search toCommand() {
+			return new ProductCommand.Search(
+				fromOrderDate,
+				toOrderDate,
+				limit
+			);
+		}
+	}
 
 	public record AmountResponse(
 		Long id,

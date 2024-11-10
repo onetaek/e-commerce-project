@@ -3,6 +3,7 @@ package com.study.ecommerce.cache;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 
 import com.study.ecommerce.application.ProductFacade;
 import com.study.ecommerce.common.constant.CacheConstants;
+import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductRepository;
 
 @EnableCaching
@@ -40,14 +42,15 @@ public class ProductCacheTestConstant {
 	public void testGetPopularProductsCaching() {
 		// given
 		Objects.requireNonNull(redisCacheManager.getCache(CacheConstants.POPULAR_PRODUCTS_CACHE)).clear();
+		var command = new ProductCommand.Search(LocalDateTime.now().minusDays(3), LocalDateTime.now(), 5L);
 
 		// when
 		for (int i = 0 ; i < 2; i++) {
-			productFacade.getPopularProducts();
+			productFacade.getPopularProducts(command);
 		}
 
 		// then
-		verify(productRepository, times(1)).getOrderAmountByRecent3DayAndTop5();
+		verify(productRepository, times(1)).getOrderAmountByOrderDateAndLimit(command);
 	}
 
 	@Test

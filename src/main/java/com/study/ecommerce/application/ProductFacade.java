@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.Cacheable;
 
 import com.study.ecommerce.common.annotation.ApplicationService;
 import com.study.ecommerce.common.constant.CacheConstants;
+import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductInfo;
 import com.study.ecommerce.domain.product.ProductService;
 
@@ -22,7 +23,9 @@ public class ProductFacade {
 	}
 
 	@Cacheable(value = CacheConstants.POPULAR_PRODUCTS_CACHE, key = CacheConstants.RECENT_3_DAY_TOP_5_KEY)
-	public List<ProductInfo.OrderAmount> getPopularProducts() {
-		return productService.getPopularProducts();
+	public List<ProductInfo.OrderAmount> getPopularProducts(
+		ProductCommand.Search command
+	) {
+		return productService.getPopularProducts(command);
 	}
 }

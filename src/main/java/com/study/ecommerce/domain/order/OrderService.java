@@ -86,7 +86,7 @@ public class OrderService {
 	private void productInventorySubtract(OrderCommand.Order command, Long[] productIds) {
 		var commandProducts = command.products().stream()
 			.collect(Collectors.toMap(OrderCommand.Order.Product::productId, Function.identity()));
-		var inventoryList = productRepository.getInventoryList(productIds);
+		var inventoryList = productRepository.getInventoryListWithLock(productIds);
 
 		for (ProductInventory inventory : inventoryList) {
 			var commandProduct = commandProducts.get(inventory.getProductId());

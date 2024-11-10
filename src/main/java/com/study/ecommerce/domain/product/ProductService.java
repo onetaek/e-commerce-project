@@ -24,11 +24,11 @@ public class ProductService {
 	 *     <li>1대1 관계로 Product 와 ProductInventory 가 있는데 이를 매핑 시켜줄 뿐이다.</li>
 	 * </ul>
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<ProductInfo.Amount> getDetailList() {
 		List<Product> productList = productRepository.getList();
 		Long[] productIds = productList.stream().map(Product::getId).toArray(Long[]::new);
-		List<ProductInventory> productInventoryList = productRepository.getInventoryList(productIds);
+		List<ProductInventory> productInventoryList = productRepository.getInventoryListWithLock(productIds);
 
 		Map<Long, ProductInventory> inventoryMap = productInventoryList.stream()
 			.collect(Collectors.toMap(ProductInventory::getProductId, inventory -> inventory));
@@ -68,7 +68,9 @@ public class ProductService {
 	 * </ul>
 	 */
 	@Transactional(readOnly = true)
-	public List<ProductInfo.OrderAmount> getPopularProducts() {
-		return productRepository.getOrderAmountByRecent3DayAndTop5();
+	public List<ProductInfo.OrderAmount> getPopularProducts(
+		ProductCommand.Search command
+	) {
+		return productRepository.getOrderAmountByOrderDateAndLimit(command);
 	}
 }
