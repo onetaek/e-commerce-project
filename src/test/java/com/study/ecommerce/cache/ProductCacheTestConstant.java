@@ -14,18 +14,18 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.cache.RedisCacheManager;
 
+import com.study.ecommerce.application.ProductFacade;
 import com.study.ecommerce.common.constant.CacheConstants;
 import com.study.ecommerce.domain.product.ProductRepository;
-import com.study.ecommerce.domain.product.ProductService;
 
 @EnableCaching
 @SpringBootTest
-public class ProductServiceCacheTestConstant {
+public class ProductCacheTestConstant {
 	@SpyBean
 	private ProductRepository productRepository;
 
 	@Autowired
-	private ProductService productService;
+	private ProductFacade productFacade;
 
 	@Autowired
 	private RedisCacheManager redisCacheManager;
@@ -36,14 +36,14 @@ public class ProductServiceCacheTestConstant {
 	}
 
 	@Test
-	@DisplayName("인기상품조회: 캐시가 비워져 있는 상황에서 3번 호출을 하면 DB호출은 1번만 발생한다.")
+	@DisplayName("인기상품조회: 캐시가 비워져 있는 상황에서 2번 호출을 하면 DB호출은 1번만 발생한다.")
 	public void testGetPopularProductsCaching() {
 		// given
 		Objects.requireNonNull(redisCacheManager.getCache(CacheConstants.POPULAR_PRODUCTS_CACHE)).clear();
 
 		// when
-		for (int i = 0 ; i < 3; i++) {
-			productService.getPopularProducts();
+		for (int i = 0 ; i < 2; i++) {
+			productFacade.getPopularProducts();
 		}
 
 		// then
@@ -51,14 +51,14 @@ public class ProductServiceCacheTestConstant {
 	}
 
 	@Test
-	@DisplayName("상품목록조회: 캐시가 비워져 있는 상황에서 3번 호출을 하면 DB호출은 1번만 발생한다.")
+	@DisplayName("상품목록조회: 캐시가 비워져 있는 상황에서 2번 호출을 하면 DB호출은 1번만 발생한다.")
 	public void testGetProductsCaching() {
 		// given
 		Objects.requireNonNull(redisCacheManager.getCache(CacheConstants.PRODUCTS_CACHE)).clear();
 
 		// when
-		for (int i = 0 ; i < 3; i++) {
-			productService.getDetailList();
+		for (int i = 0 ; i < 5; i++) {
+			productFacade.getDetailList();
 		}
 
 		// then

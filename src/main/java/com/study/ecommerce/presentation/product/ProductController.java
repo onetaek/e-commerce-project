@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.study.ecommerce.application.ProductFacade;
 import com.study.ecommerce.domain.product.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/products")
 public class ProductController {
 
+	private final ProductFacade productFacade;
 	private final ProductService productService;
 
 	/**
@@ -26,7 +28,7 @@ public class ProductController {
 	@GetMapping
 	public ResponseEntity<List<ProductDto.AmountResponse>> getProductList() {
 		return ResponseEntity.ok().body(
-			ProductDto.AmountResponse.from(productService.getDetailList())
+			ProductDto.AmountResponse.from(productFacade.getDetailList())
 		);
 	}
 
@@ -50,7 +52,7 @@ public class ProductController {
 	@GetMapping("popular")
 	public ResponseEntity<List<ProductDto.OrderAmountResponse>> getPopularProducts() {
 		return ResponseEntity.ok().body(
-			ProductDto.OrderAmountResponse.from(productService.getPopularProducts())
+			ProductDto.OrderAmountResponse.from(productFacade.getPopularProducts())
 		);
 	}
 }

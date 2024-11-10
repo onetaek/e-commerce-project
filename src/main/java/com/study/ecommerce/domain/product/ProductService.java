@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
-import com.study.ecommerce.common.constant.CacheConstants;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +24,7 @@ public class ProductService {
 	 *     <li>1대1 관계로 Product 와 ProductInventory 가 있는데 이를 매핑 시켜줄 뿐이다.</li>
 	 * </ul>
 	 */
-	@Cacheable(value = CacheConstants.PRODUCTS_CACHE, key = CacheConstants.PRODUCTS_ALL)
+	@Transactional(readOnly = true)
 	public List<ProductInfo.Amount> getDetailList() {
 		List<Product> productList = productRepository.getList();
 		Long[] productIds = productList.stream().map(Product::getId).toArray(Long[]::new);
@@ -51,6 +49,7 @@ public class ProductService {
 	/**
 	 * <h1>제품 정보 단건조회</h1>
 	 */
+	@Transactional(readOnly = true)
 	public ProductInfo.Amount getDetail(Long productId) {
 		Product product = productRepository.getById(productId);
 		ProductInventory productInventory = productRepository.getInventoryByProductId(productId);
@@ -68,7 +67,7 @@ public class ProductService {
 	 *     <li>쿼리를 통해 group by 와 limit 를 사용해서 상위 주문 수량을 집계하였다.</li>
 	 * </ul>
 	 */
-	@Cacheable(value = CacheConstants.POPULAR_PRODUCTS_CACHE, key = CacheConstants.RECENT_3_DAY_TOP_5_KEY)
+	@Transactional(readOnly = true)
 	public List<ProductInfo.OrderAmount> getPopularProducts() {
 		return productRepository.getOrderAmountByRecent3DayAndTop5();
 	}
