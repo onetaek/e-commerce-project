@@ -37,7 +37,7 @@ public class OrderService {
 		return orderId;
 	}
 
-	public void send(OrderCommand.SendData sendData) {
-		orderSender.send(sendData.orderId(), sendData.totalPrice());
+	public void sendEvent(OrderCommand.SendData sendData) {
+		orderSender.sendEvent(sendData.orderId(), sendData.totalPrice());
 	}
 }

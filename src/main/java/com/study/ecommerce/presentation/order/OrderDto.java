@@ -31,4 +31,12 @@ public class OrderDto {
 			);
 		}
 	}
+
+	public record Event(
+		Long orderId,
+		Long totalPrice
+	){
+
+	}
+
 }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.study.ecommerce.domain.order.OrderService;
+import com.study.ecommerce.application.OrderFacade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-	private final OrderService orderService;
+	private final OrderFacade orderFacade;
 
 	/**
 	 * 주문과 결제를 수행한다.
@@ -26,7 +26,7 @@ public class OrderController {
 	 */
 	@PostMapping
 	public ResponseEntity<Void> order(@RequestBody OrderDto.Request request) {
-		orderService.order(request.toCommand());
+		orderFacade.order(request.toCommand());
 		return ResponseEntity.ok().build();
 	}
 }

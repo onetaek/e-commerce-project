@@ -37,7 +37,7 @@ public class OrderFacade {
 		productService.deduct(command);
 		var totalPrice = pointService.use(command, productInfoMap);
 
-		orderService.send(new OrderCommand.SendData(orderId, totalPrice));
+		orderService.sendEvent(new OrderCommand.SendData(orderId, totalPrice));
 
 		return orderId;
 	}
