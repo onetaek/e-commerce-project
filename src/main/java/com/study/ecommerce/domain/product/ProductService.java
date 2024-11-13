@@ -2,10 +2,13 @@ package com.study.ecommerce.domain.product;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.study.ecommerce.domain.order.OrderCommand;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,5 +75,27 @@ public class ProductService {
 		ProductCommand.Search command
 	) {
 		return productRepository.getOrderAmountByOrderDateAndLimit(command);
+	}
+
+	public Map<Long, ProductInfo.Data> getProductMap(Long... ids) {
+		return productRepository.getList(ids).stream()
+			.collect(Collectors.toMap(
+				Product::getId,
+				v -> new ProductInfo.Data(v.getId(), v.getName(), v.getPrice())));
+	}
+
+	/**
+	 * <h1>상품 재고 차감</h1>
+	 */
+	public void deduct(OrderCommand.Order command) {
+		var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
+		var inventoryList = productRepository.getInventoryListWithLock(productIds);
+		var commandProducts = command.products().stream()
+			.collect(Collectors.toMap(OrderCommand.Order.Product::productId, Function.identity()));
+
+		for (ProductInventory inventory : inventoryList) {
+			var commandProduct = commandProducts.get(inventory.getProductId());
+			inventory.subtract(commandProduct.amount());
+		}
 	}
 }

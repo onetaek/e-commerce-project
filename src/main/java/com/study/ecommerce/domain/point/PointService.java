@@ -1,7 +1,12 @@
 package com.study.ecommerce.domain.point;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.study.ecommerce.domain.order.OrderCommand;
+import com.study.ecommerce.domain.product.ProductInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,5 +53,29 @@ public class PointService {
 			.type(Point.Type.CHARGE)
 			.build();
 		pointRepository.saveHistory(pointHistory);
+	}
+
+	/**
+	 * <h1>포인트 사용</h1>
+	 * <ul>
+	 *     <li>유저 포인트 차감(유효성)</li>
+	 *     <li>유저 포인트 이력저장</li>
+	 * </ul>
+	 * @return 사용한 총 수량(주문 총수 량)
+	 */
+	public Long use(OrderCommand.Order command, Map<Long, ProductInfo.Data> productInfoMap) {
+		var sumPrice = command.products()
+			.stream()
+			.mapToLong(product -> product.amount() * productInfoMap.get(product.productId()).price())
+			.sum();
+		var point = pointRepository.getOne(command.userId())
+			.orElseThrow(() -> PointException.notFound(command.userId()));
+		point.use(sumPrice);
+		pointRepository.saveHistory(PointHistory.builder()
+			.pointId(point.getId())
+			.amount(sumPrice)
+			.type(Point.Type.USE)
+			.build());
+		return sumPrice;
 	}
 }

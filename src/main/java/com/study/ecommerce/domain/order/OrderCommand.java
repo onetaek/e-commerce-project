@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.study.ecommerce.domain.product.ProductInfo;
+
 public class OrderCommand {
 
 	public record Order(
@@ -18,12 +20,12 @@ public class OrderCommand {
 				.build();
 		}
 
-		public List<OrderItem> toOrderItem(Long orderId, Map<Long, Long> productPriceMap) {
+		public List<OrderItem> toOrderItem(Long orderId, Map<Long, ProductInfo.Data> productInfoMap) {
 			return products.stream().map(v -> OrderItem.builder()
 					.orderId(orderId)
 					.productId(v.productId)
 					.amount(v.amount)
-					.price(productPriceMap.get(v.productId))
+					.price(productInfoMap.get(v.productId).price())
 					.build())
 				.toList();
 		}
@@ -41,5 +43,12 @@ public class OrderCommand {
 			int amount
 		) {
 		}
+	}
+
+	public record SendData(
+		Long orderId,
+		Long totalPrice
+	) {
+
 	}
 }

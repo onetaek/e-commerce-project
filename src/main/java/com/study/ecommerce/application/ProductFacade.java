@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.cache.annotation.Cacheable;
 
-import com.study.ecommerce.common.annotation.ApplicationService;
+import com.study.ecommerce.common.annotation.Facade;
 import com.study.ecommerce.common.constant.CacheConstants;
 import com.study.ecommerce.domain.product.ProductCommand;
 import com.study.ecommerce.domain.product.ProductInfo;
@@ -12,7 +12,7 @@ import com.study.ecommerce.domain.product.ProductService;
 
 import lombok.RequiredArgsConstructor;
 
-@ApplicationService
+@Facade
 @RequiredArgsConstructor
 public class ProductFacade {
 	private final ProductService productService;
