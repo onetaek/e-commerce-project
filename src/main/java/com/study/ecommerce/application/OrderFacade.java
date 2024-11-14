@@ -21,9 +21,9 @@ public class OrderFacade {
 	/**
 	 * <h1>주문 프로세스</h1>
 	 * <ol>
+	 *     <li>주문, 결제 생성</li>
 	 *     <li>상품 재고 차감</li>
 	 *     <li>사용자 포인트 차감</li>
-	 *     <li>주문, 결제 생성</li>
 	 *     <li>외부 데이터 플랫폼에 전송</li>
 	 * </ol>
 	 */
@@ -33,10 +33,13 @@ public class OrderFacade {
 			command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new)
 		);
 
+		// 주문, 결재 생성
 		var orderId = orderService.order(command, productInfoMap);
+		// 상품 재고 차감
 		productService.deduct(command);
+		// 사용자 포인트 차감
 		var totalPrice = pointService.use(command, productInfoMap);
-
+		// 외부 데이터 플랫폼에 전송
 		orderService.sendEvent(new OrderCommand.SendData(orderId, totalPrice));
 
 		return orderId;
