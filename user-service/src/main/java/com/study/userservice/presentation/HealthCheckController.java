@@ -1,4 +1,4 @@
-package com.study.productservice.presentation;
+package com.study.userservice.presentation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class HealthCheckController {
 
     @GetMapping
     public String check() {
-        return String.format("It's Working in Product Service"
+        return String.format("It's Working in User Service"
                 + ", port(server.port)=" + env.getProperty("server.port"));
     }
 }
