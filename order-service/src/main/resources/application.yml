@@ -1,0 +1,26 @@
+spring:
+  cloud:
+    config:
+      name: order-service
+  application:
+    name: order-service
+  profiles:
+    active: dev
+
+slack:
+  webhook-uri: ${SLACK_WEBHOOK_URI}
+  channel: ${SLACK_CHANEL}
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${server.port}}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+server:
+  port: 9001
+
+  redission:
+    address: redis://localhost:6379

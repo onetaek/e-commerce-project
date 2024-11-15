@@ -1,0 +1,28 @@
+spring:
+  config:
+    activate:
+      on-profile: local-mssql
+
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: ${SPRING_DATA_SOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: never
+      encoding: UTF-8
+      data-locations: >
+        classpath:/data/init.sql
+      continue-on-error: false
