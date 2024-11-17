@@ -22,16 +22,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
 	private final JPAQueryFactory queryFactory;
 
-	public List<Product> getList() {
-		var qProduct = QProduct.product;
-		return queryFactory.selectFrom(qProduct).fetch();
-	}
-
 	@Override
 	public List<Product> getList(Long... ids) {
 		var qProduct = QProduct.product;
 		return queryFactory.selectFrom(qProduct)
-			.where(qProduct.id.in(ids))
+			.where(ids == null ? null : qProduct.id.in(ids))
 			.fetch();
 	}
 

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository {
 
-	List<Product> getList();
-
 	List<Product> getList(Long... ids);
 
 	List<ProductInventory> getInventoryListWithLock(Long... ids);

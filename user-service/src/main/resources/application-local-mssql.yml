@@ -5,9 +5,9 @@ spring:
 
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: ${SPRING_DATA_SOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+    url: jdbc:sqlserver://develop.coever.co.kr:1433;databaseName=e_commerce_db;trustServerCertificate=true;characterEncoding=UTF-8;
+    username: coever
+    password: coever119!
 
   jpa:
     hibernate:

@@ -2,6 +2,7 @@ package com.study.productservice.domain.product;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class ProductService {
 	 * </ul>
 	 */
 	@Transactional
-	public List<ProductInfo.Amount> getDetailList() {
-		List<Product> productList = productRepository.getList();
+	public List<ProductInfo.Amount> getDetailList(Long[] ids) {
+		List<Product> productList = productRepository.getList(ids);
 		Long[] productIds = productList.stream().map(Product::getId).toArray(Long[]::new);
 		List<ProductInventory> productInventoryList = productRepository.getInventoryListWithLock(productIds);
 
@@ -74,26 +75,18 @@ public class ProductService {
 		return productRepository.getOrderAmountByOrderDateAndLimit(command);
 	}
 
-	public Map<Long, ProductInfo.Data> getProductMap(Long... ids) {
-		return productRepository.getList(ids).stream()
-			.collect(Collectors.toMap(
-				Product::getId,
-				v -> new ProductInfo.Data(v.getId(), v.getName(), v.getPrice())));
-	}
-
-	// TODO: OrderCommand 수정해야함
 	/**
 	 * <h1>상품 재고 차감</h1>
 	 */
-	// public void deduct(OrderCommand.Order command) {
-	// 	var productIds = command.products().stream().map(OrderCommand.Order.Product::productId).toArray(Long[]::new);
-	// 	var inventoryList = productRepository.getInventoryListWithLock(productIds);
-	// 	var commandProducts = command.products().stream()
-	// 		.collect(Collectors.toMap(OrderCommand.Order.Product::productId, Function.identity()));
-	//
-	// 	for (ProductInventory inventory : inventoryList) {
-	// 		var commandProduct = commandProducts.get(inventory.getProductId());
-	// 		inventory.subtract(commandProduct.amount());
-	// 	}
-	// }
+	public void deduct(ProductCommand.Deduct command) {
+		var productIds = command.products().stream().map(ProductCommand.Deduct.Product::productId).toArray(Long[]::new);
+		var inventoryList = productRepository.getInventoryListWithLock(productIds);
+		var commandProducts = command.products().stream()
+			.collect(Collectors.toMap(ProductCommand.Deduct.Product::productId, Function.identity()));
+
+		for (ProductInventory inventory : inventoryList) {
+			var commandProduct = commandProducts.get(inventory.getProductId());
+			inventory.subtract(commandProduct.amount());
+		}
+	}
 }

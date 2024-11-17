@@ -1,15 +1,11 @@
+server:
+  port: 9001
+
 spring:
-  cloud:
-    config:
-      name: order-service
   application:
     name: order-service
   profiles:
-    active: dev
-
-slack:
-  webhook-uri: ${SLACK_WEBHOOK_URI}
-  channel: ${SLACK_CHANEL}
+    active: local-mssql
 
 eureka:
   instance:
@@ -19,8 +15,10 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
-server:
-  port: 9001
 
-  redission:
-    address: redis://localhost:6379
+slack:
+  webhook-uri:
+  channel:
+
+web-client:
+  base-url: http://localhost:8000

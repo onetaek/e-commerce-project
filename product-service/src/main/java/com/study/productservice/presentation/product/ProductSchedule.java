@@ -49,7 +49,7 @@ public class ProductSchedule {
 	@Scheduled(fixedRate = 180000)
 	public void updateProductsCache() {
 		// 새로운 데이터를 DB에서 조회
-		var updatedData = productService.getDetailList();
+		var updatedData = productService.getDetailList(null);
 
 		// 캐시 덮어쓰기
 		Objects.requireNonNull(cacheManager.getCache(CacheConstants.PRODUCTS_CACHE))

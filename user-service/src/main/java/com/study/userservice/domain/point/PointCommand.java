@@ -6,4 +6,10 @@ public class PointCommand {
 		long amount
 	) {
 	}
+
+	public record Use(
+		String userId,
+		Long sumPrice
+	) {
+	}
 }
