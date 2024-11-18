@@ -58,20 +58,4 @@ public class ProductController {
 			ProductDto.AmountResponse.from(productService.getDetail(id))
 		);
 	}
-
-	/**
-	 * 상위 5개 주문
-	 *
-	 * @return 상품주문수량정보 목록
-	 */
-	@GetMapping("popular")
-	public ResponseEntity<List<ProductDto.OrderAmountResponse>> getPopularProducts(
-		ProductDto.PopularRequest request
-	) {
-		return ResponseEntity.ok().body(
-			ProductDto.OrderAmountResponse.from(
-				productFacade.getPopularProducts(request.toCommand())
-			)
-		);
-	}
 }

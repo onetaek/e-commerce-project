@@ -8,7 +8,12 @@ import com.study.orderservice.domain.product.ProductInfo;
 
 public class OrderCommand {
 
-	public record Order(
+	public record Search(
+		LocalDateTime fromOrderDate,
+		LocalDateTime toOrderDate,
+		Long limit
+	) {
+	}
 		String userId,
 		LocalDateTime orderDate,
 		List<Product> products

@@ -1,5 +1,6 @@
 package com.study.orderservice.domain.order;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -34,4 +35,18 @@ public class OrderService {
 		);
 		return orderId;
 	}
+
+	/**
+	 * <h1>상위 상품 조회</h1>
+	 * <ul>
+	 *     <li>쿼리를 통해 group by 와 limit 를 사용해서 상위 주문 수량을 집계하였다.</li>
+	 * </ul>
+	 */
+	@Transactional(readOnly = true)
+	public List<OrderResult.GroupByProduct> getGroupByOrders(
+		OrderCommand.Search command
+	) {
+		return orderRepository.getOrderAmountByOrderDateAndLimit(command);
+	}
+
 }

@@ -63,19 +63,6 @@ public class ProductService {
 	}
 
 	/**
-	 * <h1>상위 상품 조회</h1>
-	 * <ul>
-	 *     <li>쿼리를 통해 group by 와 limit 를 사용해서 상위 주문 수량을 집계하였다.</li>
-	 * </ul>
-	 */
-	@Transactional(readOnly = true)
-	public List<ProductInfo.OrderAmount> getPopularProducts(
-		ProductCommand.Search command
-	) {
-		return productRepository.getOrderAmountByOrderDateAndLimit(command);
-	}
-
-	/**
 	 * <h1>상품 재고 차감</h1>
 	 */
 	public void deduct(ProductCommand.Deduct command) {

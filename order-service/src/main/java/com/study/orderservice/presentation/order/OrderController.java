@@ -1,6 +1,9 @@
 package com.study.orderservice.presentation.order;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +31,21 @@ public class OrderController {
 	public ResponseEntity<Void> order(@RequestBody com.study.orderservice.presentation.order.OrderDto.Request request) {
 		orderFacade.order(request.toCommand());
 		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 상위 5개 주문
+	 *
+	 * @return 상품주문수량정보 목록
+	 */
+	@GetMapping("popular")
+	public ResponseEntity<List<OrderDto.OrderAmountResponse>> getPopularProducts(
+		OrderDto.PopularRequest request
+	) {
+		return ResponseEntity.ok().body(
+			OrderDto.OrderAmountResponse.from(
+				orderFacade.getPopularProducts(request.toCommand())
+			)
+		);
 	}
 }

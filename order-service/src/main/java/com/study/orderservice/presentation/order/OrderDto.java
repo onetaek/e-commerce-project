@@ -4,8 +4,42 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.study.orderservice.domain.order.OrderCommand;
+import com.study.orderservice.domain.order.OrderInfo;
 
 public class OrderDto {
+
+	public record PopularRequest(
+		LocalDateTime fromOrderDate,
+		LocalDateTime toOrderDate,
+		Long limit
+	) {
+		public OrderCommand.Search toCommand() {
+			return new OrderCommand.Search(
+				fromOrderDate,
+				toOrderDate,
+				limit
+			);
+		}
+	}
+
+	public record OrderAmountResponse(
+		Long productId,
+		String productName,
+		Long productPrice,
+		Integer orderAmount
+	) {
+		public static List<OrderAmountResponse> from(
+			List<OrderInfo.Product> products
+		) {
+			return products.stream()
+				.map(product -> new OrderDto.OrderAmountResponse(
+					product.productId(),
+					product.productName(),
+					product.productPrice(),
+					product.orderAmount()
+				)).toList();
+		}
+	}
 
 	public record Request(
 		String userId,

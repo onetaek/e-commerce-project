@@ -10,4 +10,5 @@ public interface OrderRepository {
 
 	Payment savePayment(Payment payment);
 
+	List<OrderResult.GroupByProduct> getOrderAmountByOrderDateAndLimit(OrderCommand.Search command);
 }

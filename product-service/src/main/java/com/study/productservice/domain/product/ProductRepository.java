@@ -11,8 +11,6 @@ public interface ProductRepository {
 
 	List<ProductInventory> getInventoryListWithLock(Long... ids);
 
-	List<ProductInfo.OrderAmount> getOrderAmountByOrderDateAndLimit(ProductCommand.Search command);
-
 	Product getById(Long productId);
 
 	ProductInventory getInventoryByProductId(Long productId);
