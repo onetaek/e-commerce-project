@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductService {
 
@@ -25,7 +26,6 @@ public class ProductService {
 	 *     <li>1대1 관계로 Product 와 ProductInventory 가 있는데 이를 매핑 시켜줄 뿐이다.</li>
 	 * </ul>
 	 */
-	@Transactional
 	public List<ProductInfo.Amount> getDetailList(Long[] ids) {
 		List<Product> productList = productRepository.getList(ids);
 		Long[] productIds = productList.stream().map(Product::getId).toArray(Long[]::new);
@@ -68,12 +68,33 @@ public class ProductService {
 	public void deduct(ProductCommand.Deduct command) {
 		var productIds = command.products().stream().map(ProductCommand.Deduct.Product::productId).toArray(Long[]::new);
 		var inventoryList = productRepository.getInventoryListWithLock(productIds);
+		Map<Long, ProductCommand.Deduct.Product> commandProductMap = command.products().stream()
+			.collect(
+				Collectors.toMap(ProductCommand.Deduct.Product::productId,
+					Function.identity())
+			);
+
+		for (ProductInventory inventory : inventoryList) {
+			var commandProduct = commandProductMap.get(inventory.getProductId());
+			inventory.subtract(commandProduct.amount());
+		}
+	}
+
+	/**
+	 * <h1>상품 재고 원복</h1>
+	 */
+	public void recovery(ProductCommand.InventoryRecovery command) {
+		var productIds = command.products()
+			.stream()
+			.map(ProductCommand.InventoryRecovery.Product::productId)
+			.toArray(Long[]::new);
+		var inventoryList = productRepository.getInventoryListWithLock(productIds);
 		var commandProducts = command.products().stream()
-			.collect(Collectors.toMap(ProductCommand.Deduct.Product::productId, Function.identity()));
+			.collect(Collectors.toMap(ProductCommand.InventoryRecovery.Product::productId, Function.identity()));
 
 		for (ProductInventory inventory : inventoryList) {
 			var commandProduct = commandProducts.get(inventory.getProductId());
-			inventory.subtract(commandProduct.amount());
+			inventory.add(commandProduct.amount());
 		}
 	}
 }

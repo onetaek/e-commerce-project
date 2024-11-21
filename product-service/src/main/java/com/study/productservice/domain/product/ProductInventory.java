@@ -36,4 +36,8 @@ public class ProductInventory {
 			throw ProductException.inventoryAmountExceed();
 		this.amount = amount - subTractAmount;
 	}
+
+	public void add(int addAmount) {
+		this.amount = this.amount + addAmount;
+	}
 }

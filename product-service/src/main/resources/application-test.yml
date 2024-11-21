@@ -1,0 +1,28 @@
+# MySQL
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0.36:///
+    username: username
+    password: password
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        query:
+          in_clause_parameter_padding: true
+
+  # Redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  # Controller advice
+  mvc:
+    log-resolved-exception: false

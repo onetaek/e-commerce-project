@@ -36,11 +36,37 @@ dependencyManagement {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
+
+    // lombox
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+
+    // test
+    implementation 'org.testcontainers:jdbc:1.20.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // https://docs.spring.io/spring-boot/reference/testing/testcontainers.html
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    // https://java.testcontainers.org/quickstart/junit_5_quickstart/
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:testcontainers:1.20.3"
+    testImplementation "org.testcontainers:junit-jupiter:1.20.3"
+    testImplementation 'org.testcontainers:jdbc:1.20.3'
+    // https://java.testcontainers.org/modules/databases/mysql/
+    testImplementation 'org.testcontainers:mysql'
+    // https://testcontainers.com/modules/redis/
+    testImplementation 'com.redis:testcontainers-redis:2.2.2'
+    // https://testcontainers.com/modules/kafka/
+    // https://java.testcontainers.org/modules/kafka/
+    testImplementation 'org.testcontainers:kafka:1.20.3'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
 
     // eureka client (eureka 서버에 등록하기 위함)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
@@ -76,6 +102,18 @@ dependencies {
 
     //slack
     implementation 'com.slack.api:slack-api-client:1.30.0'
+
+    // webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+
 }
 
 tasks.named('test') {
