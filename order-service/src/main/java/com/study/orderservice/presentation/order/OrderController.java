@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.study.orderservice.application.OrderFacade;
+import com.study.orderservice.domain.eventbox.OutboxService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderController {
 
 	private final OrderFacade orderFacade;
+	private final OutboxService outboxService;
 
 	/**
 	 * 주문과 결제를 수행한다.
@@ -28,7 +30,7 @@ public class OrderController {
 	 * @return 주문 정보
 	 */
 	@PostMapping
-	public ResponseEntity<Void> order(@RequestBody com.study.orderservice.presentation.order.OrderDto.Request request) {
+	public ResponseEntity<Void> order(@RequestBody OrderDto.Request request) {
 		orderFacade.order(request.toCommand());
 		return ResponseEntity.ok().build();
 	}
@@ -46,6 +48,13 @@ public class OrderController {
 			OrderDto.OrderAmountResponse.from(
 				orderFacade.getPopularProducts(request.toCommand())
 			)
+		);
+	}
+
+	@PostMapping("retry")
+	public ResponseEntity<Integer> order() {
+		return ResponseEntity.ok().body(
+			outboxService.retryFailedOutboxes()
 		);
 	}
 }

@@ -25,15 +25,25 @@ public class OrderService {
 	 *     <li>결제 생성</li>
 	 * </ol>
 	 */
-	public Long order(OrderCommand.Order command, Map<Long, ProductInfo.Data> productPriceMap) {
+	public List<OrderResult.Detail> order(
+		OrderCommand.OrderCreate command,
+		Map<Long, ProductInfo.Data> productPriceMap
+	) {
+		// 주문 생성
 		Long orderId = orderRepository.save(command.toOrder()).getId();
-		long sumPrice = orderRepository.saveItemAll(
+
+		// 주문 아이템 생성
+		List<OrderItem> orderItems = orderRepository.saveItemAll(
 			command.toOrderItem(orderId, productPriceMap)
-		).stream().mapToLong(v -> v.getAmount() * v.getPrice()).sum();
+		);
+
+		// 결제 생성
+		long sumPrice = orderItems.stream().mapToLong(v -> v.getAmount() * v.getPrice()).sum();
 		orderRepository.savePayment(
 			command.toPayment(orderId, sumPrice)
 		);
-		return orderId;
+
+		return OrderResult.Detail.from(orderItems);
 	}
 
 	/**
@@ -49,4 +59,14 @@ public class OrderService {
 		return orderRepository.getOrderAmountByOrderDateAndLimit(command);
 	}
 
+	public List<OrderResult.Detail> getOrderItems(long orderId) {
+		List<OrderItem> orderItems = orderRepository.getOrderItemsByOrderId(orderId);
+		return OrderResult.Detail.from(orderItems);
+	}
+
+	public void cancelOrder(OrderCommand.CancelOrder command) {
+		orderRepository.remove(command.orderId());
+		orderRepository.removeOrderItem(command.orderId());
+		orderRepository.removePayment(command.orderId());
+	}
 }

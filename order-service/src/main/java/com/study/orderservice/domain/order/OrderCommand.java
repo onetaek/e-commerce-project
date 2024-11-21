@@ -14,12 +14,14 @@ public class OrderCommand {
 		Long limit
 	) {
 	}
+
+	public record OrderCreate(
 		String userId,
 		LocalDateTime orderDate,
 		List<Product> products
 	) {
-		public com.study.orderservice.domain.order.Order toOrder() {
-			return com.study.orderservice.domain.order.Order.builder()
+		public Order toOrder() {
+			return Order.builder()
 				.userId(userId)
 				.orderDate(orderDate)
 				.build();
@@ -48,5 +50,17 @@ public class OrderCommand {
 			int amount
 		) {
 		}
+	}
+
+	public record OrderSendMessageCreate(
+		String userId,
+		long orderId
+	) {
+	}
+
+	public record CancelOrder(
+		long orderId,
+		String userId
+	) {
 	}
 }

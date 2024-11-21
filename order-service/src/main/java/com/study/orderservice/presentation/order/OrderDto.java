@@ -3,7 +3,9 @@ package com.study.orderservice.presentation.order;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.study.orderservice.domain.eventbox.CommonEventBox;
 import com.study.orderservice.domain.order.OrderCommand;
+import com.study.orderservice.domain.order.OrderEventCommand;
 import com.study.orderservice.domain.order.OrderInfo;
 
 public class OrderDto {
@@ -52,12 +54,12 @@ public class OrderDto {
 		) {
 		}
 
-		public OrderCommand.Order toCommand() {
-			return new OrderCommand.Order(
+		public OrderCommand.OrderCreate toCommand() {
+			return new OrderCommand.OrderCreate(
 				userId,
 				orderDate,
 				products.stream().map(v ->
-					new OrderCommand.Order.Product(
+					new OrderCommand.OrderCreate.Product(
 						v.productId(),
 						v.amount()
 					)
@@ -66,11 +68,49 @@ public class OrderDto {
 		}
 	}
 
-	public record Event(
+	public record OrderCreateMessage(
+		String userId,
 		Long orderId,
-		Long totalPrice
+		List<OrderEventCommand.OrderCreate.OrderItem> orderItems
 	) {
-
+		public record OrderItem(
+			long productId,
+			int amount,
+			long price
+		) {
+		}
 	}
 
+	public record InventoryDeductFailureMessage(
+		long orderId,
+		String userId,
+		String errorMessage
+	) {
+		public OrderCommand.CancelOrder toCommand() {
+			return new OrderCommand.CancelOrder(orderId, userId);
+		}
+	}
+
+	public record UserPointUseMessage(
+		String userId,
+		long orderId,
+		long sumPrice
+	) {
+		public OrderCommand.OrderSendMessageCreate toCommand() {
+			return new OrderCommand.OrderSendMessageCreate(
+				userId,
+				orderId
+			);
+		}
+	}
+
+	public record RetrySendMessage(
+		CommonEventBox.Status status
+	) {
+		public RetrySendMessage {
+			if (status == CommonEventBox.Status.PROCESSED) {
+				throw new IllegalArgumentException("Status cannot be PROCESSED");
+			}
+		}
+	}
 }

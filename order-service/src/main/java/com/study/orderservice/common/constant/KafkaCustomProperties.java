@@ -21,5 +21,6 @@ public class KafkaCustomProperties {
 	// Consumer
 	private String keyDeserializer;
 	private String valueDeserializer;
-	private String consumerGroupId;
+	private String consumerGroupIdOutbox;
+	private String consumerGroupIdLogic;
 }

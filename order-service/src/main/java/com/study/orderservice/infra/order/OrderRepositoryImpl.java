@@ -14,6 +14,7 @@ import com.study.orderservice.domain.order.OrderResult;
 import com.study.orderservice.domain.order.Payment;
 import com.study.orderservice.domain.order.QOrder;
 import com.study.orderservice.domain.order.QOrderItem;
+import com.study.orderservice.domain.order.QPayment;
 
 import lombok.RequiredArgsConstructor;
 
@@ -65,5 +66,34 @@ public class OrderRepositoryImpl implements OrderRepository {
 			.orderBy(qOrderItem.amount.sum().desc())
 			.limit(command.limit())
 			.fetch();
+	}
+
+	@Override
+	public List<OrderItem> getOrderItemsByOrderId(long orderId) {
+		var qOrderItem = QOrderItem.orderItem;
+		return queryFactory.selectFrom(qOrderItem)
+			.where(qOrderItem.orderId.eq(orderId))
+			.fetch();
+	}
+
+	@Override
+	public void remove(long orderId) {
+		orderJpaRepository.deleteById(orderId);
+	}
+
+	@Override
+	public void removeOrderItem(long orderId) {
+		var qOrderItem = QOrderItem.orderItem;
+		queryFactory.delete(qOrderItem)
+			.where(qOrderItem.orderId.eq(orderId))
+			.execute();
+	}
+
+	@Override
+	public void removePayment(long orderId) {
+		var qPayment = QPayment.payment;
+		queryFactory.delete(qPayment)
+			.where(qPayment.orderId.eq(orderId))
+			.execute();
 	}
 }

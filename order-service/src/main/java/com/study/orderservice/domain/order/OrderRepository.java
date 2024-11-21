@@ -11,4 +11,12 @@ public interface OrderRepository {
 	Payment savePayment(Payment payment);
 
 	List<OrderResult.GroupByProduct> getOrderAmountByOrderDateAndLimit(OrderCommand.Search command);
+
+	List<OrderItem> getOrderItemsByOrderId(long orderId);
+
+	void remove(long orderId);
+
+	void removeOrderItem(long orderId);
+
+	void removePayment(long orderId);
 }
