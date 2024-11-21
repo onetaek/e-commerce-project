@@ -1,11 +1,11 @@
 server:
-  port: 9002
+  port: 9003
 
 spring:
   application:
     name: user-service
   profiles:
-    active: local-mssql
+    active: dev
 
 eureka:
   instance:
@@ -19,3 +19,24 @@ eureka:
 slack:
   webhook-uri: ${SLACK_WEBHOOK_URI}
   channel: ${SLACK_CHANEL}
+application:
+  kafka-property:
+    bootstrap-servers: localhost:29092
+
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    consumer-group-id-logic: consumer-group-logic
+    consumer-group-id-outbox: consumer-group-outbox
+
+  topic:
+    order:
+    #      order-created: order.order-created.dev
+    product:
+      inventory-deduct: product.inventory-deduct.dev
+    #      inventory-deduct-failure: product.inventory-deduct-failure.dev
+    user:
+      point-use: user.point-use.dev
+      point-use-failure: user.point-use-failure.dev

@@ -3,10 +3,12 @@ package com.study.userservice.presentation.point;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.study.userservice.domain.eventbox.OutboxService;
 import com.study.userservice.domain.point.PointService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class PointController {
 
 	private final PointService pointService;
+	private final OutboxService outboxService;
 
 	/**
 	 * 사용자의 잔액 정보를 조회한다.
@@ -43,5 +46,12 @@ public class PointController {
 	) {
 		pointService.charge(request.toCommand());
 		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("retry")
+	public ResponseEntity<Integer> order() {
+		return ResponseEntity.ok().body(
+			outboxService.retryFailedOutboxes()
+		);
 	}
 }

@@ -9,7 +9,8 @@ public class PointCommand {
 
 	public record Use(
 		String userId,
-		Long sumPrice
+		long orderId,
+		Long totalPrice
 	) {
 	}
 }

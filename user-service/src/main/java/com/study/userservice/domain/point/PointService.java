@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PointService {
 
@@ -56,16 +55,15 @@ public class PointService {
 	 *     <li>유저 포인트 차감(유효성)</li>
 	 *     <li>유저 포인트 이력저장</li>
 	 * </ul>
-	 *
-	 * @return 사용한 총 수량(주문 총수 량)
 	 */
+	@Transactional
 	public void use(PointCommand.Use command) {
 		var point = pointRepository.getOne(command.userId())
 			.orElseThrow(() -> PointException.notFound(command.userId()));
-		point.use(command.sumPrice());
+		point.use(command.totalPrice());
 		pointRepository.saveHistory(PointHistory.builder()
 			.pointId(point.getId())
-			.amount(command.sumPrice())
+			.amount(command.totalPrice())
 			.type(Point.Type.USE)
 			.build());
 	}
