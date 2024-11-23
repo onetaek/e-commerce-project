@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.study.userservice.common.exception.SendAlertException;
 import com.study.userservice.common.utility.JacksonUtils;
 import com.study.userservice.domain.eventbox.CommonEventBox;
 import com.study.userservice.domain.eventbox.Outbox;
@@ -45,11 +46,15 @@ public class PointEventListener {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void sendOrderCreateEvent(PointEventCommand.Use event) {
-		pointEventService.send(
-			userPointUseTopic,
-			event.transactionKey(),
-			JacksonUtils.convertObjectToJsonString(event)
-		);
+		try {
+			pointEventService.send(
+				userPointUseTopic,
+				event.transactionKey(),
+				JacksonUtils.convertObjectToJsonString(event)
+			);
+		} catch (Exception e) {
+			throw new SendAlertException("포인트 사용 이벤트 메시지 전송 실패");
+		}
 	}
 
 	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
@@ -68,10 +73,14 @@ public class PointEventListener {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void sendOrderCreateEvent(PointEventCommand.UseFailure event) {
-		pointEventService.send(
-			userPointUseFailureTopic,
-			event.transactionKey(),
-			JacksonUtils.convertObjectToJsonString(event)
-		);
+		try {
+			pointEventService.send(
+				userPointUseFailureTopic,
+				event.transactionKey(),
+				JacksonUtils.convertObjectToJsonString(event)
+			);
+		} catch (Exception e) {
+			throw new SendAlertException("포인트 사용 실패 이벤트 메시지 전송 실패");
+		}
 	}
 }

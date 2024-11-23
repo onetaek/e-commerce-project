@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.study.productservice.common.exception.SendAlertException;
 import com.study.productservice.common.utility.JacksonUtils;
 import com.study.productservice.domain.eventbox.CommonEventBox;
 import com.study.productservice.domain.eventbox.Outbox;
@@ -45,11 +46,15 @@ public class ProductEventListener {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void sendInventoryDeductEvent(ProductEventCommand.InventoryDeduct event) {
-		productEventService.send(
-			productInventoryDeductTopic,
-			event.transactionKey(),
-			JacksonUtils.convertObjectToJsonString(event)
-		);
+		try {
+			productEventService.send(
+				productInventoryDeductTopic,
+				event.transactionKey(),
+				JacksonUtils.convertObjectToJsonString(event)
+			);
+		} catch (Exception e) {
+			throw new SendAlertException("재고 차감 이벤트 메시지 전송 실패");
+		}
 	}
 
 	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
@@ -68,11 +73,15 @@ public class ProductEventListener {
 	@Async
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void sendInventoryDeductFailureEvent(ProductEventCommand.InventoryDeductFailure event) {
-		productEventService.send(
-			productInventoryDeductFailureTopic,
-			event.transactionKey(),
-			JacksonUtils.convertObjectToJsonString(event)
-		);
+		try {
+			productEventService.send(
+				productInventoryDeductFailureTopic,
+				event.transactionKey(),
+				JacksonUtils.convertObjectToJsonString(event)
+			);
+		} catch (Exception e) {
+			throw new SendAlertException("재고 차감 실패 이벤트 메시지 전송 실패");
+		}
 	}
 
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import com.study.orderservice.common.exception.SendAlertException;
 import com.study.orderservice.common.utility.JacksonUtils;
 import com.study.orderservice.domain.eventbox.CommonEventBox;
 import com.study.orderservice.domain.eventbox.Outbox;
@@ -37,19 +38,15 @@ public class OrderEventListener {
 	 */
 	@TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
 	public void recordOutbox(OrderEventCommand.OrderCreate event) {
-		try {
-			outboxService.record(
-				new OutboxCommand.Create(
-					String.valueOf(event.orderId()),
-					CommonEventBox.Status.PENDING,
-					Outbox.EventType.ORDER_CREATE,
-					orderOrderCreatedTopic,
-					JacksonUtils.convertObjectToJsonString(event)
-				)
-			);
-		} catch (Exception e) {
-			log.error("주문생성 이벤트 메시지 전송 실패: {}", e.getMessage(), e);
-		}
+		outboxService.record(
+			new OutboxCommand.Create(
+				String.valueOf(event.orderId()),
+				CommonEventBox.Status.PENDING,
+				Outbox.EventType.ORDER_CREATE,
+				orderOrderCreatedTopic,
+				JacksonUtils.convertObjectToJsonString(event)
+			)
+		);
 	}
 
 	/**
@@ -65,7 +62,7 @@ public class OrderEventListener {
 				JacksonUtils.convertObjectToJsonString(event)
 			);
 		} catch (Exception e) {
-			log.error("주문생성 이벤트 메시지 전송 실패: {}", e.getMessage(), e);
+			throw new SendAlertException("주문생성 이벤트 메시지 전송 실패");
 		}
 	}
 

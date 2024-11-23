@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderEventService {
 
 	private final OrderEventHandler orderEventHandler;
+	private final OrderAlertMessageSender orderAlertMessageSender;
 
 	public <T> void send(
 		String orderOrderCreatedTopic,
@@ -25,10 +26,10 @@ public class OrderEventService {
 	}
 
 	public void sendOrderProcessedAlert(OrderEventCommand.SendOrderProcessedAlert command) {
-		orderEventHandler.sendOrderProcessedAlert(command);
+		orderAlertMessageSender.sendOrderProcessedAlert(command);
 	}
 
 	public void sendOrderFailureAlert(OrderEventCommand.SendOrderFailureAlert command) {
-		orderEventHandler.sendOrderFailureAlert(command);
+		orderAlertMessageSender.sendOrderFailureAlert(command);
 	}
 }
