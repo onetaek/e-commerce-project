@@ -1,325 +1,68 @@
-# E-commerce 서버 구축
+# 항해 플러스 E-commerce 서버 구축
+![image](https://github.com/user-attachments/assets/dcf53367-0f3b-4b27-9bac-aab23dbffe74)
 
-## 프로젝트 문서
+## 📌 프로젝트 소개
 
-<details>
-  <summary><b>프로젝트 Milestone</b></summary>
-<a href="https://github.com/users/onetaek/projects/4/views/1">
-    <img src="https://github.com/user-attachments/assets/2115fb9f-fd94-4823-ac1c-fba02c8d58d7" />
-<a/>
-
-- github의 project 와 milestones 기능을 사용하여 작성하였습니다.
-- 이미지를 클릭하시면 자세한 내용을 확인할 수 있습니다.
-
-</details>
-
-<details>
-  <summary><b>도메인 모델링</b></summary>
-<a href="https://lucid.app/lucidchart/c90bb540-962e-46a2-b01a-c3a065a2714e/edit?viewport_loc=-1053%2C-547%2C2367%2C1030%2C0_0&invitationId=inv_0471bdc9-2ac0-4a1f-99e6-2adcd636f258">
-    <img src="https://github.com/user-attachments/assets/ab58869d-674a-44e7-95bf-a709f670d0ff" />
-<a/>
-- 요구사항에 맞는 어떤 `객체`를 도출해낼 것인가? 어떤 `메세지`를 전달할 것인가? 를 생각하며 모델링 하였습니다.
-
-</details>
-
-<details>
-  <summary><b>시퀀스 다이어그램</b></summary>
-
-1. 잔액 충전 / 조회 시나리오
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 잔액
-    사용자 ->> 잔액: 충전 요청 (금액)
-    alt 충전 성공
-        잔액 -->> 사용자: 충전 완료
-    else 충전 실패
-        잔액 -->> 사용자: 충전 실패 응답
-    end
-
-    사용자 ->> 잔액: 잔액 조회 요청
-    잔액 ->> 사용자: 잔액 정보 반환
-```
-
-2. 상품 조회 시나리오
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 상품
-    사용자 ->> 상품: 상품 정보 조회 요청
-    상품 ->> 사용자: 상품 목록 반환 (ID, 이름, 가격, 잔여수량)
-```
-
-3. 주문 / 결제 시나리오
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 주문
-    participant 잔액
-    participant 재고
-    participant 결제
-    사용자 ->> 주문: 주문 요청 (상품 ID, 수량 목록)
-    주문 ->> 잔액: 잔액 확인 요청
-    alt 잔액 충분
-        잔액 -->> 주문: 잔액 충분
-        주문 ->> 재고: 재고 확인 요청
-        alt 재고 충분
-            재고 -->> 주문: 재고 확인 성공
-            주문 ->> 결제: 결제 요청
-            결제 ->> 잔액: 잔액 차감 요청
-            alt 차감 성공
-                잔액 -->> 결제: 잔액 차감 완료
-                결제 -->> 주문: 결제 성공
-                주문 ->> 재고: 재고 차감 요청
-                재고 ->> 재고: 재고 차감 처리
-                재고 -->> 주문: 재고 차감 완료
-                주문 -->> 사용자: 주문 완료
-            else 차감 실패
-                잔액 -->> 결제: 차감 실패
-                결제 -->> 주문: 결제 실패
-                주문 -->> 사용자: 주문 실패 - 잔액 차감 오류
-            end
-        else 재고 부족
-            재고 -->> 주문: 재고 부족
-            주문 -->> 사용자: 주문 실패 - 재고 부족
-        end
-    else 잔액 부족
-        잔액 -->> 주문: 잔액 부족
-        주문 -->> 사용자: 주문 실패 - 잔액 부족
-    end
-
-```
-
-4. 인기 판매 상품 조회 시나리오
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 주문
-    participant 상품
-    사용자 ->> 주문: 인기 상품 조회 요청 (최근 3일)
-    주문 ->> 상품: 판매 통계 조회 요청
-    상품 ->> 주문: 인기 상품 목록 반환 (상위 5개)
-    주문 ->> 사용자: 인기 상품 정보 반환
-```
-
-5-1. 장바구니에 상품 추가
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 장바구니
-    participant 장바구니항목
-    사용자 ->> 장바구니: 상품 추가 요청 (상품 ID, 수량)
-    alt 장바구니 존재
-        장바구니 ->> 장바구니항목: 상품 항목 조회 (상품 ID)
-        alt 상품 존재
-            장바구니항목 ->> 장바구니항목: 수량 업데이트
-            장바구니항목 -->> 장바구니: 업데이트 완료
-        else 상품 미존재
-            장바구니 ->> 장바구니항목: 새로운 상품 항목 추가
-            장바구니항목 -->> 장바구니: 추가 완료
-        end
-    else 장바구니 미존재
-        장바구니 ->> 장바구니: 새로운 장바구니 생성
-        장바구니 ->> 장바구니항목: 상품 항목 추가
-        장바구니항목 -->> 장바구니: 추가 완료
-    end
-    장바구니 -->> 사용자: 상품 추가 완료
-
-```
-
-5-2. 장바구니에서 상품 삭제
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 장바구니
-    participant 장바구니항목
-    사용자 ->> 장바구니: 상품 삭제 요청 (상품 ID)
-    장바구니 ->> 장바구니항목: 상품 항목 조회 (상품 ID)
-    alt 상품 존재
-        장바구니항목 ->> 장바구니항목: 항목 삭제
-        장바구니항목 -->> 장바구니: 삭제 완료
-        장바구니 -->> 사용자: 상품 삭제 완료
-    else 상품 미존재
-        장바구니 -->> 사용자: 삭제 실패 - 상품 없음
-    end
-
-```
-
-5-3. 장바구니 조회
-
-```mermaid
-sequenceDiagram
-    participant 사용자
-    participant 장바구니
-    participant 장바구니항목
-    participant 상품
-    사용자 ->> 장바구니: 장바구니 조회 요청
-    장바구니 ->> 장바구니항목: 장바구니 항목 조회
-    장바구니항목 ->> 상품: 상품 정보 조회 (상품 ID)
-    상품 -->> 장바구니항목: 상품 정보 반환 (이름, 가격)
-    장바구니항목 -->> 장바구니: 장바구니 항목 정보 반환
-    장바구니 -->> 사용자: 장바구니 목록 반환 (상품 이름, 수량, 가격)
-```
-
-</details>
+- 항해플러스 백엔드 심화과정(2024.09 ~ 2024.12)
+- **TDD와 클린 아키텍처**를 적용한 이커머스 시스템 설계 및 구현
+- **대규모 트래픽 처리**를 위한 최적화된 기술 스택 활용
+- **장애 대응과 고가용성** 시스템 설계
+- Pull Request 작성 연습을 통해 **가독성 높은 PR** 작성 역량 강화
 
 
-<details>
-  <summary><b>ERD</b></summary>
+## 🧑‍💻 기술 요약
 
-## ERD
-
-```mermaid
-erDiagram
-    User {
-        BIGINT id PK "PRIMARY KEY AUTO_INCREMENT"
-        VARCHAR name "NOT NULL"
-        BIGINT balance_id FK "FOREIGN KEY"
-    }
-    Balance {
-        BIGINT balance_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT user_id FK "FOREIGN KEY UNIQUE"
-        DECIMAL amount "NOT NULL DEFAULT 0.00"
-    }
-    Product {
-        BIGINT product_id PK "PRIMARY KEY AUTO_INCREMENT"
-        VARCHAR name "NOT NULL"
-        DECIMAL price "NOT NULL"
-    }
-    Order {
-        BIGINT order_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT user_id FK "FOREIGN KEY"
-        TIMESTAMP order_date "DEFAULT CURRENT_TIMESTAMP"
-        DECIMAL total_price
-    }
-    OrderItem {
-        BIGINT order_item_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT order_id FK "FOREIGN KEY"
-        BIGINT product_id FK "FOREIGN KEY"
-        INT quantity "NOT NULL"
-        DECIMAL price "NOT NULL"
-    }
-    Inventory {
-        BIGINT inventory_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT product_id FK "UNIQUE"
-        INT amount "NOT NULL"
-    }
-    Payment {
-        BIGINT payment_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT order_id FK "UNIQUE FOREIGN KEY"
-        DECIMAL amount "NOT NULL"
-        VARCHAR payment_status "NOT NULL"
-    }
-    Cart {
-        BIGINT cart_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT user_id FK "UNIQUE FOREIGN KEY"
-    }
-    CartItem {
-        BIGINT cart_item_id PK "PRIMARY KEY AUTO_INCREMENT"
-        BIGINT cart_id FK "FOREIGN KEY"
-        BIGINT product_id FK "FOREIGN KEY"
-        INT amount "NOT NULL"
-    }
-
-    User ||--o| Balance: "has"
-    User ||--o{ Order: "places"
-    Order ||--|{ OrderItem: "contains"
-    Order ||--o| Payment: "has"
-    Product ||--|{ OrderItem: "included in"
-    Product ||--o| Inventory: "has"
-    User ||--o| Cart: "has"
-    Cart ||--|{ CartItem: "contains"
-    Product ||--|{ CartItem: "included in"
-```
-
-</details>
+- TDD
+- 설계(ERD, Mock API, 사퀀스 다이어그램)
+- 동시성 이슈(DB Lock)
+- DB Index
+- 클린아키텍처
+- 캐싱(Redis)
+- 로깅, Exception 처리
+- Kafka(트랜잭션 아웃박스 패턴)
+- 장애 대응(이번주차)
 
 
-<details>
-  <summary><b>API 명세서</b></summary>
+## 📝 블로그정리
 
-http://hanghae.duckdns.org/
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <a href="https://velog.io/@wontaekoh/%EB%AA%A8%EB%86%80%EB%A6%AC%EC%8B%9D-MSA-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EC%95%84%EC%9B%83%EB%B0%95%EC%8A%A4-%ED%8C%A8%ED%84%B4-%EB%B3%B4%EC%83%81-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=모놀리식-MSA-리팩터링트랜잭션-아웃박스-패턴-보상-트랜잭션" width="49%">
+  </a>
+  <a href="https://velog.io/@wontaekoh/MSA-%EB%8F%84%EC%9E%85%EC%9D%98-%EB%AA%A9%EC%A0%81%EA%B3%BC-%EA%B3%A0%EB%A0%A4%EC%82%AC%ED%95%AD">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=MSA-도입의-목적과-고려사항" width="49%">
+  </a> 
+  <a href="https://velog.io/@wontaekoh/Cache%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC-%EC%A1%B0%ED%9A%8C-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%ED%95%98%EA%B8%B0">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=Cache를-활용하여-조회-성능-개선하기" width="49%">
+  </a>
+  <a href="https://velog.io/@wontaekoh/222-wqm0kz8m">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=222-wqm0kz8m" width="49%">
+  </a>
+  <a href="https://velog.io/@wontaekoh/%EB%82%98%EB%8A%94-%ED%81%B4%EB%A6%B0%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98%EB%A5%BC-%EC%9D%B4%EB%A0%87%EA%B2%8C-%EA%B5%AC%ED%98%84%ED%95%98%EC%98%80%EB%8B%A4">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=나는-클린아키텍처를-이렇게-구현하였다" width="49%">
+  </a>
+  <a href="https://velog.io/@wontaekoh/%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%8F-Java%EC%97%90%EC%84%9C%EC%9D%98-%ED%95%B4%EA%B2%B0%EB%B0%A9%EB%B2%95">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=동시성-문제-및-Java에서의-해결방법" width="49%">
+  </a>
+  <a href="https://velog.io/@wontaekoh/API-First-DesignOpen-API-CodeGenerator%EB%A5%BC-%ED%99%9C%EC%9A%A9">
+    <img src="https://velog-readme-stats.vercel.app/api?name=wontaekoh&slug=API-First-DesignOpen-API-CodeGenerator를-활용" width="49%">
+  </a>
+</div>
 
-- 위 링크를 통해 API 명세서를 확인할 수 있습니다.
-- OpenAPI CodeGenerator 를 사용하여 API 명세서를 생성하였습니다.
-- AWS를 통해 API서버를 배포하였습니다.
+## 📑 보고서
 
-</details>
+- 📁 [장애 대응 보고서](./documentation/장애 대응 보고서.md)
+- 📁 [서비스 확장에 따른 트랜잭션 분리](./documentation/서비스 확장에 따른 트랜잭션 분리.md)
+- 📁 [부하 테스트 보고서](./documentation/부하 테스트 보고서.md)
+- 📁 [데이터 플랫폼 전송로직 구현](./documentation/데이터 플랫폼 전송로직 구현.md)
 
-<details>
-  <summary><b>기술스택</b></summary>
+## 🛠️ 설계 아티팩트
 
-### **1. Web Application Server**
+- 📁 [ERD](./documentation/ERD.md)
+- 📁 [패키지구조](./documentation/패키지구조.md)
+- 📁 [시퀀스다이어그램](./documentation/시퀀스다이어그램.md)
+- 📁 [도메인모델링](./documentation/도메인모델링.md)
+- 📁 [e-커머스명세](./documentation/e-커머스명세.md)
+- 📁 [API명세서](./documentation/API명세서.md)
 
-- **Java 17**
-- **Spring Boot**
-- **Spring Web**
-- **Spring Validation**
-- **Spring Security**
-- **JWT (Json Web Token)**
-
-### **2. Database**
-
-- **H2** (Domain)
-- **Spring Data JPA**
-- **QueryDSL**
-
-### **3. Messaging Solution**
-
-- **Spring for Apache Kafka**
-
-### **4. Caching**
-
-- **Redis** (Caching)
-
-### **5. Monitoring System**
-
-- **Prometheus** (Application Metadata)
-- **Grafana**
-- **Spring Actuator**
-
-### **6. Documentation**
-
-- **Swagger**
-
-### **7. Testing**
-
-- **Spring Boot Test**
-
-</details>
-
-
-
-<details>
-  <summary><b>패키지 구조</b></summary>
-
-```
-application/
-  └── 도메인Facade.java
-presentation/
-  └── 도메인/ (product, order, user, cart...)
-      ├── 도메인Controller.java
-      ├── usecase/
-      └── dto/
-          ├── request/
-          └── response/
-domain/
-  └── 도메인/
-      ├── 도메인Entity.java
-      ├── 도메인Service.java
-      └── 도메인Repository (I/F)
-infrastructure/
-  └── 도메인/
-      └── infrastructure/
-          ├── 도메인JpaRepositoryImpl.java (구현체)
-          ├── 도메인JpaRepository.java (JPA)
-          └── 도메인QueryRepository.java (QueryDSL)
-```
-
-</details>
+## 🔀 [Pull Request](https://github.com/onetaek/e-commerce-project/pulls?q=is%3Apr+is%3Aclosed)
