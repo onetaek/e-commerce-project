@@ -22,6 +22,13 @@
 - Kafka(트랜잭션 아웃박스 패턴)
 - 장애 대응
 
+## 🧩 아키텍처 구조도(MSA)
+![image](https://github.com/user-attachments/assets/34655caf-5a59-4e56-9a10-ffcab01dbbce)
+
+
+## 🔀 토픽 흐름도(Kafka)
+![image](https://github.com/user-attachments/assets/807a1851-6afd-4c6d-a327-7069ebd29c41)
+
 
 ## 📝 블로그정리
 
